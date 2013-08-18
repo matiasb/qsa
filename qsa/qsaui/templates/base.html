@@ -1,0 +1,56 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block html-title %}Qué salió anoche?{% endblock html-title %}</title>
+    {% comment %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}" />
+    {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block head-extra %}{% endblock head-extra %}
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="navbar-inner">
+            <a class="brand" href="{% url 'home'%}">
+                <img src="{% static 'images/logo.png' %}" width="50px" />
+            </a>
+            <ul class="nav pull-right">
+                {% if user.is_authenticated %}
+                <li>
+                    <p class="navbar-text">{% blocktrans %}Signed in as {{ user }}{% endblocktrans %}</p>
+                </li>
+                <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+                {% else %}
+                <li><a href="{% url 'account_login' %}">{% trans "Sign In" %}</a></li>
+                <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                {% for message in messages %}
+                    <div id="messages" class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {% block content %}{% endblock content %}
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">
+    {% block footer %}{% endblock footer %}
+    </div>
+
+</body>
+</html>

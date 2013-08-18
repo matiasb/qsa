@@ -6,8 +6,10 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'qsa.views.home', name='home'),
+    url(r'^$', 'qsaui.views.home', name='home'),
     # url(r'^qsa/', include('qsa.foo.urls')),
+
+    (r'^accounts/', include('allauth.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
