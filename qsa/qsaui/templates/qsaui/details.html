@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content-title %}{{ series.name }}{% endblock %}
+
+{% block inner-content %}
+
+<div class="media">
+    <div class="pull-right">
+        <img class="media-object"  src="{{ series.poster }}" width="200" />
+    </div>
+    <div class="media-body">
+
+        <dl class="dl-horizontal">
+          <dt>Overview</dt>
+          <dd>{{ series.overview }}</dd>
+
+          <dt>Cast</dt>
+          <dd>{{ series.cast }}</dd>
+
+          <dt>Tags</dt>
+          <dd>{{ series.tags }}</dd>
+
+          <dt>First aired date</dt>
+          <dd>{{ series.first_aired }}</dd>
+
+          <dt>Runtime</dt>
+          <dd>{{ series.runtime }} minutes</dd>
+
+          <dt>Completed?</dt>
+          <dd>{{ series.completed|yesno }}</dd>
+
+        </dl>
+        {% with series.tvdb_id as tvdb_id %}
+        {% include 'qsaui/_add-to-watchlist.html' %}
+        {% endwith %}
+    </div>
+
+</div>
+
+{% endblock inner-content %}

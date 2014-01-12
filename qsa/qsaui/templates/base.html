@@ -28,7 +28,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'home'%}">QSA</a>
+          <a class="navbar-brand" href="{% url 'home' %}">QSA</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -41,9 +41,9 @@
             </form>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
-                <li>
-                    <p class="navbar-text navbar-right">{% blocktrans %}Signed in as <a href="#" class="navbar-link">{{ user }}</a>{% endblocktrans %}</p>
-                </li>
+                <li><p class="navbar-text navbar-right">
+                    <a href="{% url 'account_email' %}" class="navbar-link">{% blocktrans %}Signed in as {{ user }}{% endblocktrans %}</a>
+                </p></li>
                 <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
                 {% else %}
                 <li><a href="{% url 'account_login' %}">{% trans "Sign In" %}</a></li>
@@ -55,20 +55,24 @@
 
     <div class="container">
 
-        <div class="page-header">
-            <h1>{% block page-title %}Qué Salió Anoche{% endblock %}</h1>
+        <div class="span12">
+            {% for message in messages %}
+                <div id="messages" class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
         </div>
 
-        <div class="row-fluid">
-            <div class="span12">
-                {% for message in messages %}
-                    <div id="messages" class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-                {% block content %}{% endblock content %}
+        {% block content %}
+
+            <div class="page-header">
+                <h1>{% block content-title %}Qué Salió Anoche?{% endblock content-title %}</h1>
             </div>
-        </div>
+
+            {% block inner-content %}
+            {% endblock inner-content %}
+
+        {% endblock content %}
 
     </div> <!-- /container -->
 

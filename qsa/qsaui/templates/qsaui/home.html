@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block content-title %}Your watchlist{% endblock %}
+
+{% block inner-content %}
 
 {% if series %}
 
 <ul>
 {% for s in series %}
-    <li>{{ s.name }}</li>
+    <li><a href="{% url 'series-detail' s.tvdb_id %}" >{{ s.name }}</a></li>
 {% endfor %}
 </ul>
 
@@ -16,6 +18,6 @@
 
 {% endif %}
 
-{% include 'qsaui/search.html' %}
+{% include 'qsaui/_search.html' %}
 
-{% endblock content %}
+{% endblock inner-content %}

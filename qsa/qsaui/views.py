@@ -29,13 +29,19 @@ def search(request):
     return TemplateResponse(request, 'qsaui/results.html', context)
 
 
+@require_GET
+@login_required
+def series_detail(request, tvdb_id):
+    series, _ = Series.objects.get_or_create(tvdb_id=tvdb_id, extended=False)
+    context = dict(series=series)
+    return TemplateResponse(request, 'qsaui/details.html', context)
+
+
 @require_POST
 @login_required
 def add_to_watchlist(request):
     tvdb_id = request.POST.get('tvdb_id')
-    series, created = Series.objects.get_or_create(tvdb_id=tvdb_id)
-    if created:
-        series.update_from_tvdb()
+    series, _ = Series.objects.get_or_create(tvdb_id=tvdb_id, extended=True)
     request.user.watcher.series.add(series)
 
     messages.success(
