@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if series %}
+
+<ul>
+{% for s in series %}
+    <li>{{ s.name }}</li>
+{% endfor %}
+</ul>
+
+{% else %}
+
+<p>You have not yet chosen any series to track!</p>
+
+{% endif %}
+
+{% include 'qsaui/search.html' %}
+
+{% endblock content %}

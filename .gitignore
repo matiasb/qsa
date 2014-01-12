@@ -1,2 +1,3 @@
 qsa/qsa.db
+qsa/qsa/settings/local.py
 *.pyc

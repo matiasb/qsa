@@ -3,3 +3,4 @@ django-allauth
 south
 pep8
 pyflakes
+-e git+https://github.com/matiasb/tvdbpy.git#egg=tvdbpy

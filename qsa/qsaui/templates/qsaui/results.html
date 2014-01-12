@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if result %}
+
+<ul class="media-list">
+{% for s in result %}
+<li class="media">
+    <div class="pull-right">
+        <img class="media-object" src="{{ s.banner }}" width="350"/>
+        <form action="{% url 'add-to-watchlist' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="tvdb_id" value="{{ s.id }}" />
+            <button type="submit" class="btn btn-default">Add to watch list</button>
+        </form>
+    </div>
+    <div class="media-body">
+        <h4 class="media-heading">{{ s.name }}</h4>
+        {% if s.overview %}
+        <p><small>{{ s.overview }}</small></p>
+        {% endif %}
+    </div>
+</li>
+{% endfor %}
+</ul>
+
+{% else %}
+
+<h4 class="media-heading">No results found for "{{ q }}"</h4>
+
+{% endif %}
+
+<div>
+{% include 'qsaui/search.html' %}
+</div>
+
+{% endblock content %}
