@@ -9,8 +9,8 @@ class Series(models.Model):
 
     name = models.TextField()
     overview = models.TextField()
-    first_aired = models.DateField()
-    runtime = models.PositiveIntegerField()  # minutes
+    first_aired = models.DateField(null=True)
+    runtime = models.PositiveIntegerField(null=True)  # minutes
     tags = models.TextField()
     cast = models.TextField()
     poster = models.URLField()
@@ -22,6 +22,14 @@ class Series(models.Model):
         """Update this instance using the remote info from TvDB site."""
         client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
         series = client.get_series_by_id(self.tvdb_id)
+        attrs = (
+            'name', 'overview', 'first_aired', 'runtime',  # 'tags', 'cast',
+            'poster', 'imdb_id',
+        )
+        for attr in attrs:
+            setattr(self, attr, getattr(series, attr))
+        self.completed = (series.status.lower() == 'ended')
+        self.save()
 
 
 class Season(models.Model):

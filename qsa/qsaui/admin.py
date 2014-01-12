@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from qsaui.models import Watcher
+from qsaui.models import Series, Watcher
 
 
 class WatcherInline(admin.StackedInline):
@@ -17,3 +17,5 @@ class UserAdmin(UserAdmin):
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
+admin.site.register(Series)

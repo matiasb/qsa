@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -25,6 +24,12 @@ class Migration(SchemaMigration):
         db.create_unique(m2m_table_name, ['watcher_id', 'series_id'])
 
 
+        # Changing field 'Series.first_aired'
+        db.alter_column(u'qsaui_series', 'first_aired', self.gf('django.db.models.fields.DateField')(null=True))
+
+        # Changing field 'Series.runtime'
+        db.alter_column(u'qsaui_series', 'runtime', self.gf('django.db.models.fields.PositiveIntegerField')(null=True))
+
     def backwards(self, orm):
         # Deleting model 'Watcher'
         db.delete_table(u'qsaui_watcher')
@@ -32,6 +37,20 @@ class Migration(SchemaMigration):
         # Removing M2M table for field series on 'Watcher'
         db.delete_table(db.shorten_name(u'qsaui_watcher_series'))
 
+
+        # User chose to not deal with backwards NULL issues for 'Series.first_aired'
+        raise RuntimeError("Cannot reverse this migration. 'Series.first_aired' and its values cannot be restored.")
+        
+        # The following code is provided here to aid in writing a correct migration
+        # Changing field 'Series.first_aired'
+        db.alter_column(u'qsaui_series', 'first_aired', self.gf('django.db.models.fields.DateField')())
+
+        # User chose to not deal with backwards NULL issues for 'Series.runtime'
+        raise RuntimeError("Cannot reverse this migration. 'Series.runtime' and its values cannot be restored.")
+        
+        # The following code is provided here to aid in writing a correct migration
+        # Changing field 'Series.runtime'
+        db.alter_column(u'qsaui_series', 'runtime', self.gf('django.db.models.fields.PositiveIntegerField')())
 
     models = {
         u'auth.group': {
@@ -95,13 +114,13 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Series'},
             'cast': ('django.db.models.fields.TextField', [], {}),
             'completed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'first_aired': ('django.db.models.fields.DateField', [], {}),
+            'first_aired': ('django.db.models.fields.DateField', [], {'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'imdb_id': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'name': ('django.db.models.fields.TextField', [], {}),
             'overview': ('django.db.models.fields.TextField', [], {}),
             'poster': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
-            'runtime': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'runtime': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
             'tags': ('django.db.models.fields.TextField', [], {}),
             'tvdb_id': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
