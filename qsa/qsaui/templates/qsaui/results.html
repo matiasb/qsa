@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if result %}
+
+<!-- 'get_series', 'id', 'imdb_id', 'language', 'network', 'overview' -->
+<ul class="media-list">
+{% for s in result %}
+<li class="media">
+    <a class="pull-left"href="#" >
+        <img class="media-object" src="{{ s.banner }}" width="350"/>
+    </a>
+    <div class="media-body">
+        <h4 class="media-heading">{{ s.name }}</h4>
+        {% if s.overview %}
+        <p><small>{{ s.overview }}</small></p>
+        {% endif %}
+    </div>
+</li>
+{% endfor %}
+</ul>
+
+{% else %}
+
+<h4 class="media-heading">No results found for "{{ q }}"</h4>
+
+{% endif %}
+
+<div>
+{% include 'qsaui/search.html' %}
+</div>
+
+{% endblock content %}
