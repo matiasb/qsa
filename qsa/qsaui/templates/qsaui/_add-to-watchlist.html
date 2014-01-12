@@ -1,0 +1,5 @@
+<form action="{% url 'add-to-watchlist' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="tvdb_id" value="{{ tvdb_id }}" />
+    <button type="submit" class="btn btn-default">Add to watch list</button>
+</form>
