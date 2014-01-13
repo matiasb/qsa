@@ -33,14 +33,13 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <form action="{% url 'search' %}" method="GET" class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="q" placeholder="Series name">
-                </div>
-                <button type="submit" class="btn btn-default">Search</button>
-            </form>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
+                <li><form action="{% url 'search' %}" method="GET" class="navbar-form" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="Series name">
+                    </div>
+                </form></li>
                 <li><p class="navbar-text navbar-right">
                     <a href="{% url 'account_email' %}" class="navbar-link">{% blocktrans %}Signed in as {{ user }}{% endblocktrans %}</a>
                 </p></li>
