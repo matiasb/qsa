@@ -37,7 +37,7 @@
                 {% if user.is_authenticated %}
                 <li><form action="{% url 'search' %}" method="GET" class="navbar-form" role="search">
                     <div class="form-group">
-                        <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="Series name">
+                        <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="Search series">
                     </div>
                 </form></li>
                 <li><p class="navbar-text navbar-right">
