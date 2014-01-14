@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -36,7 +34,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'Episode.first_aired'
         raise RuntimeError("Cannot reverse this migration. 'Episode.first_aired' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration
         # Changing field 'Episode.first_aired'
         db.alter_column(u'qsaui_episode', 'first_aired', self.gf('django.db.models.fields.DateField')())

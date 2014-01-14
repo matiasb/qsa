@@ -2,13 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
-from django.views.decorators.http import (
-    require_GET,
-    require_POST,
-    require_http_methods,
-)
+from django.views.decorators.http import require_GET, require_http_methods
 from tvdbpy import TvDB
 
 from qsaui.models import Series
@@ -62,6 +57,7 @@ def update(request, series):
 
 def add_to_watchlist(request, series):
     request.user.watcher.series.add(series)
+    series.update_from_tvdb(extended=True)
     messages.success(
         request, '%s successfully added to your watchlist' % series.name)
     return HttpResponseRedirect(reverse(home))
