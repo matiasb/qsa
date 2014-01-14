@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -35,30 +38,38 @@ class Series(models.Model):
     tvdb_id = models.CharField(max_length=256)
     imdb_id = models.CharField(max_length=256)
 
+    def __unicode__(self):
+        return self.name
+
     def update_from_tvdb(self, extended=False):
         """Update this instance using the remote info from TvDB site."""
         client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
-        series = client.get_series_by_id(self.tvdb_id)
+        tvdb_series = client.get_series_by_id(self.tvdb_id)
         attrs = (
             'name', 'overview', 'first_aired', 'runtime',  'network',
             'poster', 'banner', 'imdb_id',
         )
         for attr in attrs:
-            setattr(self, attr, getattr(series, attr))
+            setattr(self, attr, getattr(tvdb_series, attr))
 
-        self.cast = ', '.join(series.actors)
-        self.tags = ', '.join(series.genre)
+        self.cast = ', '.join(tvdb_series.actors)
+        self.tags = ', '.join(tvdb_series.genre)
 
-        self.completed = (series.status.lower() == 'ended')
+        self.completed = (tvdb_series.status.lower() == 'ended')
 
         if extended:
             # grab series.seasons
-            self.fetch_episodes()
+            self._fetch_episodes(tvdb_series)
 
         self.save()
 
-    def fetch_episodes(self):
-        pass
+    def _fetch_episodes(self, tvdb_series):
+        for s, episodes in tvdb_series.seasons.iteritems():
+            season, _ = Season.objects.get_or_create(series=self, number=s)
+            for i, e in episodes.iteritems():
+                episode, _ = Episode.objects.get_or_create(
+                    season=season, number=i, tvdb_id=e.id)
+                episode.update_from_tvdb(e)
 
 
 class Season(models.Model):
@@ -67,6 +78,16 @@ class Season(models.Model):
     year = models.PositiveIntegerField(null=True)
     number = models.PositiveIntegerField()
 
+    class Meta:
+        unique_together = ('series', 'number')
+
+    def __unicode__(self):
+        if self.number > 0:
+            season = 'season %s' % self.number
+        else:
+            season = 'specials'
+        return '%s %s' % (self.series.name, season)
+
 
 class Episode(models.Model):
 
@@ -74,12 +95,30 @@ class Episode(models.Model):
     number = models.PositiveIntegerField()
     name = models.TextField()
     overview = models.TextField()
-    first_aired = models.DateField()
+    first_aired = models.DateField(null=True)
     image = models.URLField()
     tvdb_id = models.CharField(max_length=256)
     imdb_id = models.CharField(max_length=256)
+    guest_stars = models.TextField(null=True)
     writer = models.TextField(null=True)
     director = models.TextField(null=True)
+
+    class Meta:
+        unique_together = ('season', 'number')
+
+    def _blank_if_none(self, attr, value):
+        if value is None:
+            value = ''
+        setattr(self, attr, value)
+
+    def update_from_tvdb(self, tvdb_episode):
+        attrs = (
+            'director', 'guest_stars', 'image', 'name', 'overview', 'writer',
+        )
+        for attr in attrs:
+            self._blank_if_none(attr, getattr(tvdb_episode, attr))
+        self.first_aired = tvdb_episode.first_aired
+        self.save()
 
 
 class Watcher(models.Model):
