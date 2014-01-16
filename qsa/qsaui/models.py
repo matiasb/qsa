@@ -41,10 +41,11 @@ class Series(models.Model):
     def __unicode__(self):
         return self.name
 
-    def update_from_tvdb(self, extended=False):
+    def update_from_tvdb(self, extended=True):
         """Update this instance using the remote info from TvDB site."""
         client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
-        tvdb_series = client.get_series_by_id(self.tvdb_id)
+        tvdb_series = client.get_series_by_id(
+            self.tvdb_id, full_record=extended)
         attrs = (
             'name', 'overview', 'first_aired', 'runtime',  'network',
             'poster', 'banner', 'imdb_id',
@@ -58,7 +59,7 @@ class Series(models.Model):
         self.completed = (tvdb_series.status.lower() == 'ended')
 
         if extended:
-            # grab series.seasons
+            # load seasons, which are already fetched
             self._fetch_episodes(tvdb_series)
 
         self.save()
@@ -126,9 +127,9 @@ class Watcher(models.Model):
     series = models.ManyToManyField(Series)
 
 
-def create_watcher(sender, instance, created, **kwargs):
+def create_watcher(sender, instance, created, raw, **kwargs):
     assert sender == User
-    if created:
+    if created and not raw:
         Watcher.objects.create(user=instance)
 
 
