@@ -41,6 +41,11 @@ class Series(models.Model):
     def __unicode__(self):
         return self.name
 
+    def episodes(self, with_specials=False):
+        """Return a dictionary of seasons with a list of episodes."""
+        seasons
+        return
+
     def update_from_tvdb(self, extended=True):
         """Update this instance using the remote info from TvDB site."""
         client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
@@ -92,7 +97,7 @@ class Season(models.Model):
 
 class Episode(models.Model):
 
-    season = models.ForeignKey(Season)
+    season = models..PositiveIntegerField()
     number = models.PositiveIntegerField()
     name = models.TextField()
     overview = models.TextField()
