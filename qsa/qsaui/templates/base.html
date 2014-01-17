@@ -6,6 +6,7 @@
 
 <head>
     <title>{% block html-title %}Qué salió anoche?{% endblock html-title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% comment %}
     <link rel="stylesheet" href="{% static 'css/reset.css' %}" />
     {% endcomment %}
@@ -28,7 +29,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'home' %}">QSA</a>
+          <a class="navbar-brand" href="{% url 'home' %}">Qué salió anoche?</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
