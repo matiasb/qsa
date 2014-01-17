@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -49,6 +51,16 @@ class Series(models.Model):
 
     def episodes(self, with_specials=False):
         """Return a dictionary of seasons with a list of episodes."""
+
+    @property
+    def next_episode(self):
+        return self.episode_set.filter(
+            first_aired__gt=datetime.utcnow()).order_by('first_aired')[0]
+
+    @property
+    def last_episode(self):
+        return self.episode_set.filter(
+            first_aired__le=datetime.utcnow()).order_by('-first_aired')[0]
 
     def update_from_tvdb(self, extended=True):
         """Update this instance using the remote info from TvDB site."""
