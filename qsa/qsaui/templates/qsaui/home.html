@@ -4,20 +4,25 @@
 
 {% block inner-content %}
 
-{% if series %}
 
-<ul>
-{% for s in series %}
-    <li><a href="{% url 'series-detail' s.tvdb_id %}" >{{ s.name }}</a></li>
+{% for series in watchlist %}
+
+    {% if forloop.counter0|divisibleby:"2" %}
+        <div class="row">
+    {% endif %}
+
+    <div class="col-md-6" style="margin-bottom: 10px">
+        {% with series.id as tvdb_id %}
+            {% include "qsaui/_series_entry.html" %}
+        {% endwith %}
+    </div>
+
+    {% if not forloop.counter0|divisibleby:"2" or forloop.last %}
+        </div>
+    {% endif %}
+
+{% empty %}
+    <p>You have not yet chosen any series to track!</p>
 {% endfor %}
-</ul>
-
-{% else %}
-
-<p>You have not yet chosen any series to track!</p>
-
-{% endif %}
-
-{% include 'qsaui/_search.html' %}
 
 {% endblock inner-content %}

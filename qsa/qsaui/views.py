@@ -12,7 +12,7 @@ from qsaui.models import Series
 @login_required
 def home(request):
     context = dict(
-        series=request.user.watcher.series.all(),
+        watchlist=request.user.watcher.series.all(),
     )
     return TemplateResponse(request, 'qsaui/home.html', context)
 
@@ -44,8 +44,7 @@ def series_detail(request, tvdb_id):
 
     on_watchlist = request.user.watcher.series.filter(id=series.id).exists()
     context = dict(
-        series=series, on_watchlist=on_watchlist,
-        seasons=series.season_set.exclude(number=0))
+        series=series, on_watchlist=on_watchlist)
     return TemplateResponse(request, 'qsaui/details.html', context)
 
 
