@@ -9,9 +9,7 @@
 {% with series.id as tvdb_id %}
     {% include "qsaui/_series_entry.html" %}
     <div>
-        {% if series.overview %}
-            <p><small>{{ series.overview }}</small></p>
-        {% endif %}
+        <p><small>{{ series.overview|default:"No overview available." }}</small></p>
         {% include 'qsaui/_add-to-watchlist.html' %}
     </div>
 {% endwith %}

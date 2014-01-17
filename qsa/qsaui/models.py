@@ -38,6 +38,9 @@ class Series(models.Model):
     tvdb_id = models.CharField(max_length=256)
     imdb_id = models.CharField(max_length=256)
 
+    class Meta:
+        verbose_name_plural = 'series'
+
     def __unicode__(self):
         return self.name
 
@@ -90,7 +93,7 @@ class Episode(models.Model):
         unique_together = ('series', 'season', 'number')
 
     def __unicode__(self):
-        return '%s S%.2fE%.2fs' % (self.series.name, self.season, self.number)
+        return '%s S%02dE%02d' % (self.series.name, self.season, self.number)
 
     def _blank_if_none(self, attr, value):
         if value is None:
@@ -99,11 +102,12 @@ class Episode(models.Model):
 
     def update_from_tvdb(self, tvdb_episode):
         attrs = (
-            'director', 'guest_stars', 'image', 'name', 'overview', 'writer',
+            'director', 'image', 'name', 'overview', 'writer',
         )
         for attr in attrs:
             self._blank_if_none(attr, getattr(tvdb_episode, attr))
         self.first_aired = tvdb_episode.first_aired
+        self.guest_stars = ', '.join(tvdb_episode.guest_stars)
         self.save()
 
 

@@ -12,7 +12,7 @@
     {% endif %}
 
     <div class="col-md-6" style="margin-bottom: 10px">
-        {% with series.id as tvdb_id %}
+        {% with series.tvdb_id as tvdb_id %}
             {% include "qsaui/_series_entry.html" %}
         {% endwith %}
     </div>
