@@ -29,11 +29,6 @@
           <dt>Completed?</dt>
           <dd>{{ series.completed|yesno }}</dd>
 
-        {% if series.season_set.count %}
-          <dt>Seasons</dt>
-          <dd>{{ series.season_set.count }}</dd>
-        {% endif %}
-
         </dl>
         {% with series.tvdb_id as tvdb_id %}
         {% include 'qsaui/_add-to-watchlist.html' %}
