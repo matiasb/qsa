@@ -64,34 +64,17 @@ class Series(models.Model):
         self.save()
 
     def _fetch_episodes(self, tvdb_series):
-        for s, episodes in tvdb_series.seasons.iteritems():
-            season, _ = Season.objects.get_or_create(series=self, number=s)
+        for season, episodes in tvdb_series.seasons.iteritems():
             for i, e in episodes.iteritems():
                 episode, _ = Episode.objects.get_or_create(
-                    season=season, number=i, tvdb_id=e.id)
+                    series=self, season=season, number=i, tvdb_id=e.id)
                 episode.update_from_tvdb(e)
-
-
-class Season(models.Model):
-
-    series = models.ForeignKey(Series)
-    year = models.PositiveIntegerField(null=True)
-    number = models.PositiveIntegerField()
-
-    class Meta:
-        unique_together = ('series', 'number')
-
-    def __unicode__(self):
-        if self.number > 0:
-            season = 'season %s' % self.number
-        else:
-            season = 'specials'
-        return '%s %s' % (self.series.name, season)
 
 
 class Episode(models.Model):
 
-    season = models.ForeignKey(Season)
+    series = models.ForeignKey(Series)
+    season = models.PositiveIntegerField()
     number = models.PositiveIntegerField()
     name = models.TextField()
     overview = models.TextField()
@@ -104,7 +87,14 @@ class Episode(models.Model):
     director = models.TextField(null=True)
 
     class Meta:
-        unique_together = ('season', 'number')
+        unique_together = ('series', 'season', 'number')
+
+    def __unicode__(self):
+        if self.season > 0:
+            season = 'season %s' % self.season
+        else:
+            season = 'specials'
+        return '%s S%.2fE%.2fs' % (self.series.name, season, self.number)
 
     def _blank_if_none(self, attr, value):
         if value is None:
