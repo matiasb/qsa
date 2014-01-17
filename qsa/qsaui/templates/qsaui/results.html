@@ -4,37 +4,20 @@
 
 {% block inner-content %}
 
-{% if result %}
-
-<ul class="media-list">
 {% for series in result %}
-<li class="media">
-    <div class="pull-right">
-        <a href="{% url 'series-detail' series.id %}">
-            <img class="media-object" src="{{ series.banner }}" width="350"/>
-        </a>
-        {% with series.id as tvdb_id %}
-        {% include 'qsaui/_add-to-watchlist.html' %}
-        {% endwith %}
-    </div>
-    <div class="media-body">
-        <h4 class="media-heading">{{ series.name }}</h4>
+
+{% with series.id as tvdb_id %}
+    {% include "qsaui/_series_entry.html" %}
+    <div>
         {% if series.overview %}
-        <p><small>{{ series.overview }}</small></p>
+            <p><small>{{ series.overview }}</small></p>
         {% endif %}
+        {% include 'qsaui/_add-to-watchlist.html' %}
     </div>
-</li>
+{% endwith %}
+
+{% empty %}
+    <p>No results found for "{{ q }}"</p>
 {% endfor %}
-</ul>
-
-{% else %}
-
-<h4 class="media-heading">No results found for "{{ q }}"</h4>
-
-{% endif %}
-
-<div>
-{% include 'qsaui/_search.html' %}
-</div>
 
 {% endblock inner-content %}

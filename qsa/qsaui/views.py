@@ -12,7 +12,7 @@ from qsaui.models import Series
 @login_required
 def home(request):
     context = dict(
-        series=request.user.watcher.series.all(),
+        watchlist=request.user.watcher.series.all(),
     )
     return TemplateResponse(request, 'qsaui/home.html', context)
 

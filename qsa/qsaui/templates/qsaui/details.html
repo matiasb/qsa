@@ -26,7 +26,7 @@
           <dt>Runtime</dt>
           <dd>{{ series.runtime }} minutes</dd>
 
-          <dt>Completed?</dt>
+          <dt>Finished?</dt>
           <dd>{{ series.completed|yesno }}</dd>
 
         {% if series.season_set.count %}
@@ -35,9 +35,10 @@
         {% endif %}
 
         </dl>
+
         {% with series.tvdb_id as tvdb_id %}
-        {% include 'qsaui/_add-to-watchlist.html' %}
-        {% include 'qsaui/_reindex.html' %}
+            {% include 'qsaui/_add-to-watchlist.html' %}
+            {% include 'qsaui/_reindex.html' %}
         {% endwith %}
     </div>
 

@@ -1,0 +1,19 @@
+<div class="media">
+    {% if series.poster %}
+        <a class="pull-left" href="{% url 'series-detail' tvdb_id %}">
+            <img src="{{ series.poster }}" width="80" />
+        </a>
+    {% endif %}
+    <div class="media-body">
+        <h4 class="media-heading">{{ series.name }}</h4>
+        <p>
+            <small>{{ series.first_aired.year }} | {{ series.network|default:"-" }} |
+                {{ series.completed|yesno:"Finished,On going, Unknown" }} |
+                <a href="{% url 'series-detail' tvdb_id %}"> Details</a></small>
+        </p>
+        {% if series.season_set.count %}
+            <p><span class="label label-default">Last episode</span> S03E03: The title (09/01/2014)</p>
+            <p><span class="label label-success">Next episode</span> S03E04: Another title (16/01/2014)</p>
+        {% endif %}
+    </div>
+</div>
