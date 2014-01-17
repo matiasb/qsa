@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET, require_http_methods
 from tvdbpy import TvDB
 
 from qsaui.models import Series
@@ -29,21 +29,35 @@ def search(request):
     return TemplateResponse(request, 'qsaui/results.html', context)
 
 
-@require_GET
+@require_http_methods(['GET', 'POST'])
 @login_required
 def series_detail(request, tvdb_id):
     series, _ = Series.objects.get_or_create(tvdb_id=tvdb_id, extended=False)
-    context = dict(series=series)
+    if request.method == 'POST':
+        if 'add-to-watchlist' in request.POST:
+            return add_to_watchlist(request, series)
+        elif 'update' in request.POST:
+            return update(request, series)
+        else:
+            messages.warning(request, 'Invalid operation')
+            return HttpResponseRedirect('.')
+
+    watched = request.user.watcher.series.filter(id=series.id).exists()
+    context = dict(series=series, watched=watched)
     return TemplateResponse(request, 'qsaui/details.html', context)
 
 
-@require_POST
-@login_required
-def add_to_watchlist(request):
-    tvdb_id = request.POST.get('tvdb_id')
-    series, _ = Series.objects.get_or_create(tvdb_id=tvdb_id, extended=True)
-    request.user.watcher.series.add(series)
+def update(request, series):
+    series.update_from_tvdb(extended=True)
+    messages.success(
+        request, '%s successfully updated' % series.name)
+    return HttpResponseRedirect(
+        reverse(series_detail, kwargs=dict(tvdb_id=series.tvdb_id)))
 
+
+def add_to_watchlist(request, series):
+    request.user.watcher.series.add(series)
+    series.update_from_tvdb(extended=True)
     messages.success(
         request, '%s successfully added to your watchlist' % series.name)
     return HttpResponseRedirect(reverse(home))
