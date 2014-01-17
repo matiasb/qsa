@@ -30,7 +30,13 @@
           <dd>{{ series.completed|yesno }}</dd>
 
           <dt>Seasons</dt>
-          <dd>{{ series.seasons.count }}</dd>
+          <dd>{{ seasons }}</dd>
+
+          <dt>Last episode</dt>
+          <dd>{{ series.last_episode }}</dd>
+
+          <dt>Next episode</dt>
+          <dd>{{ series.next_episode }}</dd>
 
         </dl>
 

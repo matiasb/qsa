@@ -44,7 +44,8 @@ def series_detail(request, tvdb_id):
 
     on_watchlist = request.user.watcher.series.filter(id=series.id).exists()
     context = dict(
-        series=series, on_watchlist=on_watchlist)
+        series=series, on_watchlist=on_watchlist,
+        seasons=list(series.seasons())[-1])
     return TemplateResponse(request, 'qsaui/details.html', context)
 
 

@@ -50,20 +50,24 @@ class Series(models.Model):
         episodes = self.episode_set
         if not with_specials:
             episodes = episodes.exclude(season=0)
-        return episodes.values_list('season', flat=True)
+        return episodes.distinct().values_list('season', flat=True)
 
     def episodes(self, with_specials=False):
         """Return a dictionary of seasons with a list of episodes."""
 
     @property
     def next_episode(self):
-        return self.episode_set.filter(
-            first_aired__gt=datetime.utcnow()).order_by('first_aired')[0]
+        episodes = self.episode_set.filter(
+            first_aired__gt=datetime.utcnow()).order_by('first_aired')
+        if episodes.exists():
+            return episodes[0]
 
     @property
     def last_episode(self):
-        return self.episode_set.filter(
-            first_aired__le=datetime.utcnow()).order_by('-first_aired')[0]
+        episodes = self.episode_set.filter(
+            first_aired__lte=datetime.utcnow()).order_by('-first_aired')
+        if episodes.exists():
+            return episodes[0]
 
     def update_from_tvdb(self, extended=True):
         """Update this instance using the remote info from TvDB site."""
@@ -129,7 +133,8 @@ class Episode(models.Model):
         for attr in attrs:
             self._blank_if_none(attr, getattr(tvdb_episode, attr))
         self.first_aired = tvdb_episode.first_aired
-        self.guest_stars = ', '.join(tvdb_episode.guest_stars)
+        if tvdb_episode.guest_stars:
+            self.guest_stars = ', '.join(tvdb_episode.guest_stars)
         self.save()
 
 
