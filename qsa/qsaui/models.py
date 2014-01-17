@@ -90,11 +90,7 @@ class Episode(models.Model):
         unique_together = ('series', 'season', 'number')
 
     def __unicode__(self):
-        if self.season > 0:
-            season = 'season %s' % self.season
-        else:
-            season = 'specials'
-        return '%s S%.2fE%.2fs' % (self.series.name, season, self.number)
+        return '%s S%.2fE%.2fs' % (self.series.name, self.season, self.number)
 
     def _blank_if_none(self, attr, value):
         if value is None:
