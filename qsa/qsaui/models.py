@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -44,10 +46,34 @@ class Series(models.Model):
     def __unicode__(self):
         return self.name
 
-    def update_from_tvdb(self, extended=False):
+    def seasons(self, with_specials=False):
+        episodes = self.episode_set
+        if not with_specials:
+            episodes = episodes.exclude(season=0)
+        return episodes.distinct().values_list('season', flat=True)
+
+    def episodes(self, with_specials=False):
+        """Return a dictionary of seasons with a list of episodes."""
+
+    @property
+    def next_episode(self):
+        episodes = self.episode_set.filter(
+            first_aired__gt=datetime.utcnow()).order_by('first_aired')
+        if episodes.exists():
+            return episodes[0]
+
+    @property
+    def last_episode(self):
+        episodes = self.episode_set.filter(
+            first_aired__lte=datetime.utcnow()).order_by('-first_aired')
+        if episodes.exists():
+            return episodes[0]
+
+    def update_from_tvdb(self, extended=True):
         """Update this instance using the remote info from TvDB site."""
         client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
-        tvdb_series = client.get_series_by_id(self.tvdb_id)
+        tvdb_series = client.get_series_by_id(
+            self.tvdb_id, full_record=extended)
         attrs = (
             'name', 'overview', 'first_aired', 'runtime',  'network',
             'poster', 'banner', 'imdb_id',
@@ -61,7 +87,7 @@ class Series(models.Model):
         self.completed = (tvdb_series.status.lower() == 'ended')
 
         if extended:
-            # grab series.seasons
+            # load seasons, which are already fetched
             self._fetch_episodes(tvdb_series)
 
         self.save()
@@ -107,7 +133,8 @@ class Episode(models.Model):
         for attr in attrs:
             self._blank_if_none(attr, getattr(tvdb_episode, attr))
         self.first_aired = tvdb_episode.first_aired
-        self.guest_stars = ', '.join(tvdb_episode.guest_stars)
+        if tvdb_episode.guest_stars:
+            self.guest_stars = ', '.join(tvdb_episode.guest_stars)
         self.save()
 
 
@@ -116,9 +143,9 @@ class Watcher(models.Model):
     series = models.ManyToManyField(Series)
 
 
-def create_watcher(sender, instance, created, **kwargs):
+def create_watcher(sender, instance, created, raw, **kwargs):
     assert sender == User
-    if created:
+    if created and not raw:
         Watcher.objects.create(user=instance)
 
 

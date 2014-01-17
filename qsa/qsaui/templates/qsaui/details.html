@@ -29,6 +29,15 @@
           <dt>Finished?</dt>
           <dd>{{ series.completed|yesno }}</dd>
 
+          <dt>Seasons</dt>
+          <dd>{{ seasons }}</dd>
+
+          <dt>Last episode</dt>
+          <dd>{{ series.last_episode }}</dd>
+
+          <dt>Next episode</dt>
+          <dd>{{ series.next_episode }}</dd>
+
         </dl>
 
         {% with series.tvdb_id as tvdb_id %}

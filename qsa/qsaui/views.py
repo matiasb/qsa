@@ -32,7 +32,7 @@ def search(request):
 @require_http_methods(['GET', 'POST'])
 @login_required
 def series_detail(request, tvdb_id):
-    series, _ = Series.objects.get_or_create(tvdb_id=tvdb_id, extended=False)
+    series, _ = Series.objects.get_or_create(tvdb_id=tvdb_id, extended=True)
     if request.method == 'POST':
         if 'add-to-watchlist' in request.POST:
             return add_to_watchlist(request, series)
@@ -42,8 +42,10 @@ def series_detail(request, tvdb_id):
             messages.warning(request, 'Invalid operation')
             return HttpResponseRedirect('.')
 
-    watched = request.user.watcher.series.filter(id=series.id).exists()
-    context = dict(series=series, watched=watched)
+    on_watchlist = request.user.watcher.series.filter(id=series.id).exists()
+    context = dict(
+        series=series, on_watchlist=on_watchlist,
+        seasons=list(series.seasons())[-1])
     return TemplateResponse(request, 'qsaui/details.html', context)
 
 
@@ -57,7 +59,6 @@ def update(request, series):
 
 def add_to_watchlist(request, series):
     request.user.watcher.series.add(series)
-    series.update_from_tvdb(extended=True)
     messages.success(
         request, '%s successfully added to your watchlist' % series.name)
     return HttpResponseRedirect(reverse(home))

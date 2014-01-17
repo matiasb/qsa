@@ -11,9 +11,17 @@
                 {{ series.completed|yesno:"Finished,On going, Unknown" }} |
                 <a href="{% url 'series-detail' tvdb_id %}"> Details</a></small>
         </p>
-        {% if series.season_set.count %}
-            <p><span class="label label-default">Last episode</span> S03E03: The title (09/01/2014)</p>
-            <p><span class="label label-success">Next episode</span> S03E04: Another title (16/01/2014)</p>
+        {% if series.seasons %}
+            {% with series.last_episode as last %}
+            <p><span class="label label-default">Last episode</span> {{ last }}: {{ last.name }} ({{ last.first_aired }})</p>
+            {% endwith series %}
+            {% with series.next_episode as next %}
+            <p><span class="label label-success">Next episode</span>
+               {% if next %}{{ next }}: {{ next.name }} ({{ next.first_aired }})
+               {% else %}Unknown
+               {% endif %}
+            </p>
+            {% endwith series %}
         {% endif %}
     </div>
 </div>
