@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import urllib
+
 from datetime import datetime
 
 from django.conf import settings
@@ -119,7 +121,7 @@ class Episode(models.Model):
         unique_together = ('series', 'season', 'number')
 
     def __unicode__(self):
-        return '%s S%02dE%02d' % (self.series.name, self.season, self.number)
+        return 'S%02dE%02d' % (self.season, self.number)
 
     def _blank_if_none(self, attr, value):
         if value is None:
@@ -136,6 +138,12 @@ class Episode(models.Model):
         if tvdb_episode.guest_stars:
             self.guest_stars = ', '.join(tvdb_episode.guest_stars)
         self.save()
+
+    @property
+    def torrent_url(self):
+        search_term = '%s %s' % (self.series.name, unicode(self))
+        search_term = urllib.quote(search_term)
+        return 'http://thepiratebay.se/search/%s/0/7/0' % search_term
 
 
 class Watcher(models.Model):

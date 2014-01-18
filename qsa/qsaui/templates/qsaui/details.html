@@ -32,11 +32,13 @@
           <dt>Seasons</dt>
           <dd>{{ seasons }}</dd>
 
-          <dt>Last episode</dt>
-          <dd>{{ series.last_episode }}</dd>
+            {% with episode=series.last_episode label_class='label-default' label='Last' %}
+            {% include 'qsaui/_episode_entry.html' %}
+            {% endwith %}
 
-          <dt>Next episode</dt>
-          <dd>{{ series.next_episode }}</dd>
+            {% with episode=series.next_episode label_class='label-success' label='Next' %}
+            {% include 'qsaui/_episode_entry.html' %}
+            {% endwith %}
 
         </dl>
 
