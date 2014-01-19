@@ -12,9 +12,17 @@ from qsaui.models import Series
 @login_required
 def home(request):
     context = dict(
-        watchlist=request.user.watcher.series.all(),
+        yesterday=request.user.watcher.series_from_yesterday(),
     )
     return TemplateResponse(request, 'qsaui/home.html', context)
+
+
+@login_required
+def watchlist(request):
+    context = dict(
+        watchlist=request.user.watcher.series.all().order_by('name'),
+    )
+    return TemplateResponse(request, 'qsaui/watchlist.html', context)
 
 
 @require_GET

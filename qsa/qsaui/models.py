@@ -151,8 +151,9 @@ class Watcher(models.Model):
     series = models.ManyToManyField(Series)
 
     def series_from_yesterday(self):
-        yesterday = datetime.utcnow().date() - timedelta(day=1)
-        return self.series.filter(episode_set__first_aired=yesterday)
+        yesterday = datetime.utcnow().date() - timedelta(days=2)
+        import pdb; pdb.set_trace()
+        return self.series.filter(episode__first_aired=yesterday)
 
     def series_from_last_week(self):
         return []

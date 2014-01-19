@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content-title %}Your watchlist{% endblock %}
+
+{% block inner-content %}
+
+{% for series in watchlist %}
+    {% with series.tvdb_id as tvdb_id %}
+        {% include "qsaui/_series_entry.html" %}
+    {% endwith %}
+{% empty %}
+    <p>You have not yet chosen any series to track!</p>
+{% endfor %}
+
+{% endblock inner-content %}

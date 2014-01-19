@@ -42,7 +42,10 @@
                     </div>
                 </form></li>
                 <li><p class="navbar-text navbar-right">
-                    <a href="{% url 'account_email' %}" class="navbar-link">{% blocktrans %}Signed in as {{ user }}{% endblocktrans %}</a>
+                    <a href="{% url 'account_email' %}" class="navbar-link"><span class="glyphicon glyphicon-user"></span> {{ user }}</a>
+                </p></li>
+                <li><p class="navbar-text navbar-right">
+                    <a href="{% url 'your-watchlist' %}" class="navbar-link">{% blocktrans %}Your watchlist{% endblocktrans %}</a>
                 </p></li>
                 <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
                 {% else %}

@@ -1,16 +1,36 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block content-title %}Your watchlist{% endblock %}
+{% block content-title %}Episodes from last night{% endblock %}
 
 {% block inner-content %}
 
+{% for series in yesterday %}
+    {% with tvdb_id=series.tvdb_id %}
+        {% include "qsaui/_series_entry.html" %}
+    {% endwith %}
+{% empty %}
+    <p>{% trans 'No episodes from last night.' %}</p>
+{% endfor %}
 
-{% for series in watchlist %}
+{% comment %}
+<h3>{% trans 'Coming soon' %}</h3>
+{% for series in user.watcher.episodes_for_next_week %}
     {% with series.tvdb_id as tvdb_id %}
         {% include "qsaui/_series_entry.html" %}
     {% endwith %}
 {% empty %}
-    <p>You have not yet chosen any series to track!</p>
+    <p>{% trans 'No episodes scheduled for next week.' %}</p>
 {% endfor %}
+
+<h3>{% trans 'Last week' %}</h3>
+{% for series in user.watcher.episodes_from_last_week %}
+    {% with series.tvdb_id as tvdb_id %}
+        {% include "qsaui/_series_entry.html" %}
+    {% endwith %}
+{% empty %}
+    <p>{% trans 'No episodes from last week.' %}</p>
+{% endfor %}
+{% endcomment %}
 
 {% endblock inner-content %}
