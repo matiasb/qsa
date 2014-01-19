@@ -15,12 +15,12 @@
 
             {% with episode=series.last_episode label_class='label-default' label='Last' %}
             <p><span class="label label-default">Last episode</span>
-               {% include 'qsaui/_episode_entry.html' %}</p>
+               {% include 'qsaui/_episode_summary.html' %}</p>
             {% endwith %}
 
             {% with episode=series.next_episode label_class='label-success' label='Next' %}
             <p><span class="label label-success">Next episode</span>
-               {% include 'qsaui/_episode_entry.html' %}</p>
+               {% include 'qsaui/_episode_summary.html' %}</p>
             {% endwith %}
         {% endif %}
     </div>

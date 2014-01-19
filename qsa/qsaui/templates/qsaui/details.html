@@ -26,19 +26,24 @@
           <dt>Finished?</dt>
           <dd>{{ series.completed|yesno }}</dd>
 
-          <dt>Seasons</dt>
-          <dd>{{ seasons }}</dd>
+          <dt>Episodes</dt>
+          <dd>
+            {% for season in seasons %}
+                <a href="{% url 'series-episodes' series.tvdb_id season%}">Season {{ season }}</a>
+                {% if not forloop.last %}<br/>{% endif %}
+            {% endfor %}
+          </dd>
 
         </dl>
 
         <dl class="dl-horizontal">
             <dt><span class="label label-default">Last episode</span></dt>
                 {% with episode=series.last_episode %}
-                    <dd><p>{% include 'qsaui/_episode_entry.html' %}</p></dd>
+                    <dd><p>{% include 'qsaui/_episode_summary.html' %}</p></dd>
                 {% endwith %}
             <dt><span class="label label-success">Next episode</span></dt>
                 {% with episode=series.next_episode %}
-                    <dd><p>{% include 'qsaui/_episode_entry.html' %}</p></dd>
+                    <dd><p>{% include 'qsaui/_episode_summary.html' %}</p></dd>
                 {% endwith %}
         </dl>
 

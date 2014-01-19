@@ -1,0 +1,4 @@
+    {% if episode %}{{ episode }}: {{ episode.name }} ({{ episode.first_aired }})
+    | <a href="{{ episode.torrent_url }}">Search</a>
+    {% else %}Unknown
+    {% endif %}

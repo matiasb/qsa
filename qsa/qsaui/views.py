@@ -2,19 +2,35 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_GET, require_http_methods
 from tvdbpy import TvDB
 
-from qsaui.models import Series
+from qsaui.models import Series, Episode
 
 
+@require_GET
 @login_required
 def home(request):
+    watcher = request.user.watcher
     context = dict(
-        watchlist=request.user.watcher.series.all(),
+        yesterday=watcher.episodes_from_yesterday().order_by('name'),
+        last_week=watcher.episodes_from_last_week().order_by(
+            '-first_aired', 'name'),
+        next_week=watcher.episodes_for_next_week().order_by(
+            'first_aired', 'name'),
     )
     return TemplateResponse(request, 'qsaui/home.html', context)
+
+
+@require_GET
+@login_required
+def watchlist(request):
+    context = dict(
+        watchlist=request.user.watcher.series.all().order_by('name'),
+    )
+    return TemplateResponse(request, 'qsaui/watchlist.html', context)
 
 
 @require_GET
@@ -45,7 +61,7 @@ def series_detail(request, tvdb_id):
     on_watchlist = request.user.watcher.series.filter(id=series.id).exists()
     context = dict(
         series=series, on_watchlist=on_watchlist,
-        seasons=list(series.seasons())[-1])
+        seasons=series.seasons())
     return TemplateResponse(request, 'qsaui/details.html', context)
 
 
@@ -62,3 +78,12 @@ def add_to_watchlist(request, series):
     messages.success(
         request, '%s successfully added to your watchlist' % series.name)
     return HttpResponseRedirect(reverse(home))
+
+
+@require_GET
+@login_required
+def series_episodes(request, tvdb_id, season):
+    series = get_object_or_404(Series, tvdb_id=tvdb_id)
+    episodes = Episode.objects.filter(season=season, series=series)
+    context = dict(episodes=episodes, series=series, season=season)
+    return TemplateResponse(request, 'qsaui/episodes.html', context)

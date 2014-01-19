@@ -1,16 +1,46 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load humanize %}
 
-{% block content-title %}Your watchlist{% endblock %}
+{% block content-title %}Episodes from last night{% endblock %}
 
 {% block inner-content %}
 
-
-{% for series in watchlist %}
-    {% with series.tvdb_id as tvdb_id %}
-        {% include "qsaui/_series_entry.html" %}
-    {% endwith %}
+{% for episode in yesterday %}
+    {% include "qsaui/_episode_entry.html" %}
+    <a class="pull-right btn btn-default btn-xs" href="{% url 'series-episodes' episode.series.tvdb_id episode.season %}">Other episodes from {{ episode.series.name }} Season {{ episode.season }}</a>
 {% empty %}
-    <p>You have not yet chosen any series to track!</p>
+    <p>{% trans 'No episodes from last night.' %}</p>
 {% endfor %}
+
+<h3>{% trans 'Coming soon' %}</h3>
+{% regroup next_week by first_aired as episodes_by_day %}
+<ul class="list-group">
+{% for episode_by_day in episodes_by_day %}
+    <li class="list-group-item">
+        <p class="badge">{{ episode_by_day.grouper|naturalday }}</p>
+        {% for episode in episode_by_day.list %}
+        {% include "qsaui/_episode_entry.html" %}
+        {% endfor %}
+    </li>
+{% empty %}
+    <p>{% trans 'No episodes scheduled for next week.' %}</p>
+{% endfor %}
+</ul>
+
+<h3>{% trans 'Last week' %}</h3>
+{% regroup last_week by first_aired as episodes_by_day %}
+<ul class="list-group">
+{% for episode_by_day in episodes_by_day %}
+    <li class="list-group-item">
+        <p class="badge">{{ episode_by_day.grouper }}<p>
+        {% for episode in episode_by_day.list %}
+        {% include "qsaui/_episode_entry.html" %}
+        {% endfor %}
+    </li>
+{% empty %}
+    <p>{% trans 'No episodes from last week.' %}</p>
+{% endfor %}
+</ul>
 
 {% endblock inner-content %}

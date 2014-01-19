@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content-title %}{{ series.name }} - Season {{ season }}{% endblock %}
+
+{% block inner-content %}
+
+{% for episode in episodes %}
+    {% include "qsaui/_episode_entry.html" %}
+{% empty %}
+    <p>No episodes reported for the season {{ season }}.</p>
+{% endfor %}
+
+{% endblock inner-content %}
