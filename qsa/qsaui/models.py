@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import urllib
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -149,6 +149,17 @@ class Episode(models.Model):
 class Watcher(models.Model):
     user = models.OneToOneField(User)
     series = models.ManyToManyField(Series)
+
+    def series_from_yesterday(self):
+        yesterday = datetime.utcnow().date() - timedelta(day=1)
+        return self.series.filter(episode_set__first_aired=yesterday)
+
+    def series_from_last_week(self):
+        return []
+
+    def series_for_next_week(self):
+        return []
+
 
 
 def create_watcher(sender, instance, created, raw, **kwargs):
