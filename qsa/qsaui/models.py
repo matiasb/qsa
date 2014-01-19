@@ -150,17 +150,25 @@ class Watcher(models.Model):
     user = models.OneToOneField(User)
     series = models.ManyToManyField(Series)
 
-    def series_from_yesterday(self):
-        yesterday = datetime.utcnow().date() - timedelta(days=2)
-        import pdb; pdb.set_trace()
-        return self.series.filter(episode__first_aired=yesterday)
+    def episodes_from_yesterday(self):
+        yesterday = datetime.utcnow().date() - timedelta(days=1)
+        return Episode.objects.filter(
+            series__in=self.series.all(), first_aired=yesterday)
 
-    def series_from_last_week(self):
-        return []
+    def episodes_for_next_week(self):
+        today = datetime.utcnow().date()
+        a_week_from_now = today + timedelta(weeks=1)
+        return Episode.objects.filter(
+            series__in=self.series.all(),
+            first_aired__range=(today, a_week_from_now))
 
-    def series_for_next_week(self):
-        return []
-
+    def episodes_from_last_week(self):
+        today = datetime.utcnow().date()
+        a_week_ago = today - timedelta(weeks=1)
+        day_before_yesterday = today - timedelta(days=2)
+        return Episode.objects.filter(
+            series__in=self.series.all(),
+            first_aired__range=(a_week_ago, day_before_yesterday))
 
 
 def create_watcher(sender, instance, created, raw, **kwargs):
