@@ -1,7 +1,7 @@
 <div class="media">
     {% if series.poster %}
         <a class="pull-left" href="{% url 'series-detail' tvdb_id %}">
-            <img src="{{ series.poster }}" width="80" />
+            <img src="{{ series.poster }}" width="120" />
         </a>
     {% endif %}
     <div class="media-body">
@@ -12,15 +12,16 @@
                 <a href="{% url 'series-detail' tvdb_id %}"> Details</a></small>
         </p>
         {% if series.seasons %}
-        <dl>
+
             {% with episode=series.last_episode label_class='label-default' label='Last' %}
-            {% include 'qsaui/_episode_entry.html' %}
+            <p><span class="label label-default">Last episode</span>
+               {% include 'qsaui/_episode_entry.html' %}</p>
             {% endwith %}
 
             {% with episode=series.next_episode label_class='label-success' label='Next' %}
-            {% include 'qsaui/_episode_entry.html' %}
+            <p><span class="label label-success">Next episode</span>
+               {% include 'qsaui/_episode_entry.html' %}</p>
             {% endwith %}
-        </dl>
         {% endif %}
     </div>
 </div>

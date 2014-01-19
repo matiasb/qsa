@@ -1,8 +1,4 @@
-          <dt><span class="label {{ label_class }}">{{ label }} episode</span></dt>
-          <dd>
-              {% if episode %}{{ episode }}: {{ episode.name }} ({{ episode.first_aired }})
-              {% else %}Unknown
-              {% endif %}
-              <br/>
-              <a href="{{ episode.torrent_url }}">Search</a>
-          </dd>
+    {% if episode %}{{ episode }}: {{ episode.name }} ({{ episode.first_aired }})
+    | <a href="{{ episode.torrent_url }}">Search</a>
+    {% else %}Unknown
+    {% endif %}

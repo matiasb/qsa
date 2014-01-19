@@ -4,11 +4,8 @@
 
 {% block inner-content %}
 
-<div class="media">
-    <div class="pull-right">
-        <img class="media-object"  src="{{ series.poster }}" width="200" />
-    </div>
-    <div class="media-body">
+<div class="row">
+    <div class="col-md-10">
 
         <dl class="dl-horizontal">
           <dt>Overview</dt>
@@ -32,16 +29,23 @@
           <dt>Seasons</dt>
           <dd>{{ seasons }}</dd>
 
-            {% with episode=series.last_episode label_class='label-default' label='Last' %}
-            {% include 'qsaui/_episode_entry.html' %}
-            {% endwith %}
-
-            {% with episode=series.next_episode label_class='label-success' label='Next' %}
-            {% include 'qsaui/_episode_entry.html' %}
-            {% endwith %}
-
         </dl>
 
+        <dl class="dl-horizontal">
+            <dt><span class="label label-default">Last episode</span></dt>
+                {% with episode=series.last_episode %}
+                    <dd><p>{% include 'qsaui/_episode_entry.html' %}</p></dd>
+                {% endwith %}
+            <dt><span class="label label-success">Next episode</span></dt>
+                {% with episode=series.next_episode %}
+                    <dd><p>{% include 'qsaui/_episode_entry.html' %}</p></dd>
+                {% endwith %}
+        </dl>
+
+    </div>
+
+    <div class="col-md-2 text-center">
+        <p><img class="center-block media-object" src="{{ series.poster }}" width="120" /></p>
         {% with series.tvdb_id as tvdb_id %}
             {% include 'qsaui/_add-to-watchlist.html' %}
             {% include 'qsaui/_reindex.html' %}

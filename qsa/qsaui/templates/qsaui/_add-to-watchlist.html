@@ -1,8 +1,8 @@
-{% if not watched %}
+{% if not on_watchlist %}
     <form action="{% url 'series-detail' tvdb_id %}" method="POST">
         {% csrf_token %}
         <div class="btn-group">
-            <button type="submit" name="add-to-watchlist" class="btn btn-primary">Add to watch list</button>
+            <button type="submit" name="add-to-watchlist" class="btn btn-xs btn-primary">Add to watchlist</button>
         </div>
     </form>
 {% else %}
