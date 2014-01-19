@@ -1,0 +1,22 @@
+<div class="media">
+    {% if series.banner %}
+        <a class="pull-right" href="{% url 'series-detail' series.id %}">
+            <img src="{{ series.banner }}" height="40" />
+        </a>
+    {% endif %}
+    <div class="media-body">
+        <h4 class="media-heading">
+            {{ series.name }}
+        </h4>
+        <div>
+            <small>{{ series.first_aired.year }} | {{ series.network|default:"-" }} |
+                <a href="{% url 'series-detail' series.id %}"> Details</a></small>
+        </div>
+    </div>
+</div>
+<div>
+    <p><small>{{ series.overview|truncatewords:50|default:"No overview available." }}</small></p>
+    {% with series.id as tvdb_id %}
+        {% include 'qsaui/_add-to-watchlist.html' %}
+    {% endwith %}
+</div>
