@@ -26,6 +26,9 @@
           <dt>Finished?</dt>
           <dd>{{ series.completed|yesno }}</dd>
 
+          <dt>Last updated on</dt>
+          <dd>{{ series.last_updated|default:"Unknown" }}</dd>
+
           <dt>Episodes</dt>
           <dd>
             {% for season in seasons %}

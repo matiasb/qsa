@@ -14,14 +14,17 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <style>
+    body { padding-top: 40px; }
+    </style>
     {% block head-extra %}{% endblock head-extra %}
 </head>
 
 <body>
 
-    <!-- Static navbar -->
-    <nav class="navbar navbar-default" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
             <span class="sr-only">Toggle navigation</span>
@@ -54,6 +57,7 @@
                 {% endif %}
             </ul>
         </div><!-- /.navbar-collapse -->
+      </div>
     </nav>
 
     <div class="container">

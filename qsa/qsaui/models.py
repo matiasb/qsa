@@ -42,6 +42,8 @@ class Series(models.Model):
     tvdb_id = models.CharField(max_length=256)
     imdb_id = models.CharField(max_length=256)
 
+    last_updated = models.DateTimeField(null=True)
+
     class Meta:
         verbose_name_plural = 'series'
 
@@ -71,31 +73,34 @@ class Series(models.Model):
         if episodes.exists():
             return episodes[0]
 
-    def update_from_tvdb(self, extended=True):
+    def update_from_tvdb(self, tvdb_item=None, extended=True):
         """Update this instance using the remote info from TvDB site."""
-        client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
-        tvdb_series = client.get_series_by_id(
-            self.tvdb_id, full_record=extended)
+        if tvdb_item is None:
+            client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
+            tvdb_item = client.get_series_by_id(
+                self.tvdb_id, full_record=extended)
+
         attrs = (
             'name', 'overview', 'first_aired', 'runtime',  'network',
             'poster', 'banner', 'imdb_id',
         )
         for attr in attrs:
-            setattr(self, attr, getattr(tvdb_series, attr))
+            setattr(self, attr, getattr(tvdb_item, attr))
 
-        self.cast = ', '.join(tvdb_series.actors)
-        self.tags = ', '.join(tvdb_series.genre)
+        self.cast = ', '.join(tvdb_item.actors)
+        self.tags = ', '.join(tvdb_item.genre)
 
-        self.completed = (tvdb_series.status.lower() == 'ended')
+        self.completed = (tvdb_item.status.lower() == 'ended')
 
         if extended:
             # load seasons, which are already fetched
-            self._fetch_episodes(tvdb_series)
+            self._fetch_episodes(tvdb_item)
 
+        self.last_updated = datetime.utcnow()
         self.save()
 
-    def _fetch_episodes(self, tvdb_series):
-        for season, episodes in tvdb_series.seasons.iteritems():
+    def _fetch_episodes(self, tvdb_item):
+        for season, episodes in tvdb_item.seasons.iteritems():
             for i, e in episodes.iteritems():
                 episode, _ = Episode.objects.get_or_create(
                     series=self, season=season, number=i, tvdb_id=e.id)
@@ -117,6 +122,8 @@ class Episode(models.Model):
     writer = models.TextField(null=True)
     director = models.TextField(null=True)
 
+    last_updated = models.DateTimeField(null=True)
+
     class Meta:
         unique_together = ('series', 'season', 'number')
 
@@ -128,15 +135,17 @@ class Episode(models.Model):
             value = ''
         setattr(self, attr, value)
 
-    def update_from_tvdb(self, tvdb_episode):
+    def update_from_tvdb(self, tvdb_item, extended=False):
         attrs = (
             'director', 'image', 'name', 'overview', 'writer',
         )
         for attr in attrs:
-            self._blank_if_none(attr, getattr(tvdb_episode, attr))
-        self.first_aired = tvdb_episode.first_aired
-        if tvdb_episode.guest_stars:
-            self.guest_stars = ', '.join(tvdb_episode.guest_stars)
+            self._blank_if_none(attr, getattr(tvdb_item, attr))
+        self.first_aired = tvdb_item.first_aired
+        if tvdb_item.guest_stars:
+            self.guest_stars = ', '.join(tvdb_item.guest_stars)
+
+        self.last_updated = datetime.utcnow()
         self.save()
 
     @property
