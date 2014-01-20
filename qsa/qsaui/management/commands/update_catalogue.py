@@ -50,8 +50,6 @@ class Command(BaseCommand):
             msg = 'Nothing to update.'
         self.stdout.write(msg)
 
-    def _process_item(self, tvdb_item, item):
-
     def _update_item(self, update, item_class):
         new = ''
         tvdb_item = None
