@@ -45,10 +45,12 @@ class Command(BaseCommand):
             self.stderr.write(
                 'There were %s that do not exist locally.' % stats)
 
-        self.stdout.write(
-            'Successfully updated %s' %
-            ' and '.join('%s %s' % (len(v), k) for k, v in updated.iteritems())
-        )
+        if updated:
+            msg = 'Successfully updated %s' % ' and '.join(
+                '%s %s' % (len(v), k) for k, v in updated.iteritems())
+        else:
+            msg = 'Nothing to update.'
+        self.stdout.write(msg)
 
     def _process_item(self, tvdb_item, item, new=False):
         if new:
@@ -61,32 +63,32 @@ class Command(BaseCommand):
         return item
 
     def _update_item(self, update, item_class):
+        new = False
         try:
             item = item_class.objects.get(tvdb_id=update.id)
         except item_class.DoesNotExist:
-            return
+            item = None
 
-        if (item.last_updated is not None and
-                item.last_updated > update.timestamp):
-            return
-
-        return self._process_item(update.get_updated_item(), item)
-
-    def update_series(self, update):
-        return self._update_item(update, Series)
-
-    def update_episode(self, update):
-        episode = self._update_item(update, Episode)
-        if episode is None:
-            try:
+        if item is None and update.kind == tvdbpy.TvDB.EPISODE:
+            try:  # may be a new Episode
                 series = Series.objects.get(tvdb_id=update.series)
             except Series.DoesNotExist:
                 return
 
             tvdb_item = update.get_updated_item()
-            episode, created = Episode.objects.get_or_create(
+            item, created = Episode.objects.get_or_create(
                 tvdb_id=tvdb_item.id, series=series, season=tvdb_item.season,
                 number=tvdb_item.number)
-            self._process_item(tvdb_item, episode, new=True)
+            new = True
 
-        return episode
+        if (item is None or (item.last_updated is not None and
+                item.last_updated > update.timestamp)):
+            return
+
+        return self._process_item(update.get_updated_item(), item, new)
+
+    def update_series(self, update):
+        return self._update_item(update, Series)
+
+    def update_episode(self, update):
+        return self._update_item(update, Episode)
