@@ -50,41 +50,40 @@ class Command(BaseCommand):
             msg = 'Nothing to update.'
         self.stdout.write(msg)
 
-    def _process_item(self, tvdb_item, item, new=False):
-        if new:
-            new = 'new item '
-        else:
-            new = ''
-        self.stdout.write('Processing %s"%s"...' % (new, item), ending='')
-        item.update_from_tvdb(tvdb_item=tvdb_item, extended=False)
-        self.stdout.write(' [OK]')
-        return item
+    def _process_item(self, tvdb_item, item):
 
     def _update_item(self, update, item_class):
-        new = False
+        new = ''
+        tvdb_item = None
+
         try:
             item = item_class.objects.get(tvdb_id=update.id)
         except item_class.DoesNotExist:
             item = None
 
         if item is None and update.kind == tvdbpy.TvDB.EPISODE:
-            try:  # may be a new Episode
+            try:  # may be a new Episode!
                 series = Series.objects.get(tvdb_id=update.series)
             except Series.DoesNotExist:
                 return
 
             tvdb_item = update.get_updated_item()
-            item, created = Episode.objects.get_or_create(
+            item = Episode.objects.create(
                 tvdb_id=tvdb_item.id, series=series, season=tvdb_item.season,
                 number=tvdb_item.number)
-            new = True
+            new = 'new %s episode ' % series.name
 
-        if (item is None or (
-                item.last_updated is not None and
-                item.last_updated > update.timestamp)):
-            return
+        if (item is not None and item.last_updated is not None and
+                item.last_updated < update.timestamp):
+            # item needs update
+            if tvdb_item is None:
+                tvdb_item = update.get_updated_item()
 
-        return self._process_item(update.get_updated_item(), item, new)
+            self.stdout.write('Processing %s"%s"...' % (new, item), ending='')
+            item.update_from_tvdb(tvdb_item=tvdb_item, extended=False)
+            self.stdout.write(' [OK]')
+
+        return item
 
     def update_series(self, update):
         return self._update_item(update, Series)
