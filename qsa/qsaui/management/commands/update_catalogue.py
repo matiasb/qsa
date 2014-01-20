@@ -1,11 +1,9 @@
 from __future__ import unicode_literals
 
-import time
 from collections import defaultdict
-from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 import tvdbpy
 from qsaui.models import Series, Episode
@@ -81,7 +79,8 @@ class Command(BaseCommand):
                 number=tvdb_item.number)
             new = True
 
-        if (item is None or (item.last_updated is not None and
+        if (item is None or (
+                item.last_updated is not None and
                 item.last_updated > update.timestamp)):
             return
 
