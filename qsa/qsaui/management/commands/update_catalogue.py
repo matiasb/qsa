@@ -72,7 +72,7 @@ class Command(BaseCommand):
             item = Episode.objects.create(
                 tvdb_id=tvdb_item.id, series=series, season=tvdb_item.season,
                 number=tvdb_item.number)
-            new = 'new %s episode ' % series.name
+            new = 'new episode '
 
         if (item is not None and item.last_updated is not None and
                 item.last_updated < update.timestamp):
