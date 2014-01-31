@@ -59,17 +59,20 @@ class Command(BaseCommand):
         except item_class.DoesNotExist:
             item = None
 
-        if item is None and update.kind == tvdbpy.TvDB.EPISODE:
+        series = None
+        if update.kind == tvdbpy.TvDB.EPISODE:
             try:  # may be a new Episode!
                 series = Series.objects.get(tvdb_id=update.series)
             except Series.DoesNotExist:
                 return
 
+        # the series exists in our DB but the episode does not -- new episode
+        if item is None and series is not None:
             tvdb_item = update.get_updated_item()
             item = Episode.objects.create(
                 tvdb_id=tvdb_item.id, series=series, season=tvdb_item.season,
                 number=tvdb_item.number)
-            new = 'new %s episode ' % series.name
+            new = 'new episode '
 
         if (item is not None and item.last_updated is not None and
                 item.last_updated < update.timestamp):
@@ -77,7 +80,14 @@ class Command(BaseCommand):
             if tvdb_item is None:
                 tvdb_item = update.get_updated_item()
 
-            self.stdout.write('Processing %s"%s"...' % (new, item), ending='')
+            item_name = unicode(item)
+            if series is not None:
+                item_name = '%s %s' % (series.name, item_name)
+
+            update_time = update.timestamp.isoformat()
+            msg = 'Processing %s"%s" (update from %s)...'
+            self.stdout.write(
+                msg % (new, item_name, update_time), ending='')
             item.update_from_tvdb(tvdb_item=tvdb_item, extended=False)
             self.stdout.write(' [OK]')
 
