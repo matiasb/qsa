@@ -8,8 +8,10 @@
         <h4 class="media-heading">
             <a href="{% url 'series-detail' episode.series.tvdb_id %}">{{ episode.series.name }}</a> {{ episode }}: {{ episode.name }}
         </h4>
-        <p>{{ episode.first_aired }} |
+        <p>{{ episode.first_aired }}
+           {% if episode.already_aired %} |
            <a href="{{ episode.torrent_url }}">Search</a>
+           {% endif %}
         </p>
         <p><small>{{ episode.overview }}</small></p>
         <p><small>

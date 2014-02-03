@@ -12,16 +12,22 @@
                 <a href="{% url 'series-detail' tvdb_id %}"> Details</a></small>
         </p>
         {% if series.seasons %}
-
-            {% with episode=series.last_episode label_class='label-default' label='Last' %}
+        <div>
             <p><span class="label label-default">Last episode</span>
-               {% include 'qsaui/_episode_summary.html' %}</p>
+            {% with episode=series.last_episode %}
+               {% include 'qsaui/_episode_summary.html' %}
             {% endwith %}
+            </p>
 
-            {% with episode=series.next_episode label_class='label-success' label='Next' %}
-            <p><span class="label label-success">Next episode</span>
-               {% include 'qsaui/_episode_summary.html' %}</p>
+            {% if not series.completed %}
+            <p>
+            <span class="label label-success">Next episode</span>
+            {% with episode=series.next_episode %}
+               {% include 'qsaui/_episode_summary.html' %}
             {% endwith %}
+            </p>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
 </div>

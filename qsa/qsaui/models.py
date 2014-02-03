@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from __future__ import print_function
 
 import urllib
 
@@ -147,6 +146,10 @@ class Episode(models.Model):
 
         self.last_updated = datetime.utcnow()
         self.save()
+
+    @property
+    def already_aired(self):
+        return self.first_aired < datetime.utcnow().date()
 
     @property
     def torrent_url(self):
