@@ -4,10 +4,8 @@
 
 {% block inner-content %}
 
-{% for series in result %}
-
+{% for series, on_watchlist in result %}
     {% include "qsaui/_series_result.html" %}
-
 {% empty %}
     <p>No results found for "{{ q }}"</p>
 {% endfor %}
