@@ -39,7 +39,10 @@ def search(request):
     q = request.GET.get('q')
     result = []
     if q:
-        result = TvDB().search(q)
+        result = [
+            (series,
+             request.user.watcher.series.filter(tvdb_id=series.id).exists())
+            for series in TvDB().search(q)]
 
     context = dict(result=result, q=q)
     return TemplateResponse(request, 'qsaui/results.html', context)
