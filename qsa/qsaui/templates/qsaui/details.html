@@ -44,10 +44,12 @@
                 {% with episode=series.last_episode %}
                     <dd><p>{% include 'qsaui/_episode_summary.html' %}</p></dd>
                 {% endwith %}
+            {% if not series.completed %}
             <dt><span class="label label-success">Next episode</span></dt>
                 {% with episode=series.next_episode %}
                     <dd><p>{% include 'qsaui/_episode_summary.html' %}</p></dd>
                 {% endwith %}
+            {% endif %}
         </dl>
 
     </div>

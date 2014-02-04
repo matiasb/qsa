@@ -8,7 +8,6 @@
 
 {% for episode in yesterday %}
     {% include "qsaui/_episode_entry.html" %}
-    <a class="pull-right btn btn-default btn-xs" href="{% url 'series-episodes' episode.series.tvdb_id episode.season %}">Other episodes from {{ episode.series.name }} Season {{ episode.season }}</a>
 {% empty %}
     <p>{% trans 'No episodes from last night.' %}</p>
 {% endfor %}
