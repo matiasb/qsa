@@ -1,4 +1,4 @@
-qsa/qsa.db
-qsa/qsa/settings/local.py
-qsa/qsa/static
+qsa.db
 *.pyc
+staticfiles
+qsa/settings/local.py
