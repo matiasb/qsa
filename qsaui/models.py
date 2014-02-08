@@ -11,10 +11,7 @@ from django.db import models
 import tvdbpy
 
 
-IMDB_DETAIL = 'http://www.imdb.com/title/%s/'
-
-
-class TvDBObject(models.Model):
+class BaseTvDBItem(models.Model):
 
     name = models.TextField()
     overview = models.TextField()
@@ -30,7 +27,7 @@ class TvDBObject(models.Model):
     @property
     def imdb_url(self):
         if self.imdb_id:
-            return IMDB_DETAIL % self.imdb_id
+            return 'http://www.imdb.com/title/%s/' % self.imdb_id
 
     def update_from_tvdb(self, tvdb_item=None, extended=True):
         self.last_updated = datetime.utcnow()
@@ -50,7 +47,7 @@ class SeriesManager(models.Manager):
         return instance, created
 
 
-class Series(TvDBObject):
+class Series(BaseTvDBItem):
 
     objects = SeriesManager()
 
@@ -122,7 +119,7 @@ class Series(TvDBObject):
                 episode.update_from_tvdb(e)
 
 
-class Episode(TvDBObject):
+class Episode(BaseTvDBItem):
 
     series = models.ForeignKey(Series)
     season = models.PositiveIntegerField()
