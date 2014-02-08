@@ -11,6 +11,29 @@ from django.db import models
 import tvdbpy
 
 
+class BaseTvDBItem(models.Model):
+
+    name = models.TextField()
+    overview = models.TextField()
+    first_aired = models.DateField(null=True)
+    tvdb_id = models.CharField(max_length=256)
+    imdb_id = models.CharField(max_length=256)
+
+    last_updated = models.DateTimeField(null=True)
+
+    class Meta:
+        abstract = True
+
+    @property
+    def imdb_url(self):
+        if self.imdb_id:
+            return 'http://www.imdb.com/title/%s/' % self.imdb_id
+
+    def update_from_tvdb(self, tvdb_item=None, extended=True):
+        self.last_updated = datetime.utcnow()
+        self.save()
+
+
 class SeriesManager(models.Manager):
 
     def get_or_create(self, *args, **kwargs):
@@ -24,13 +47,10 @@ class SeriesManager(models.Manager):
         return instance, created
 
 
-class Series(models.Model):
+class Series(BaseTvDBItem):
 
     objects = SeriesManager()
 
-    name = models.TextField()
-    overview = models.TextField()
-    first_aired = models.DateField(null=True)
     runtime = models.PositiveIntegerField(null=True)  # minutes
     network = models.TextField()
     tags = models.TextField()
@@ -38,10 +58,6 @@ class Series(models.Model):
     poster = models.URLField()
     banner = models.URLField()
     completed = models.BooleanField(default=False)
-    tvdb_id = models.CharField(max_length=256)
-    imdb_id = models.CharField(max_length=256)
-
-    last_updated = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name_plural = 'series'
@@ -93,8 +109,7 @@ class Series(models.Model):
             # load seasons, which are already fetched
             self._fetch_episodes(tvdb_item)
 
-        self.last_updated = datetime.utcnow()
-        self.save()
+        super(Series, self).update_from_tvdb(tvdb_item, extended)
 
     def _fetch_episodes(self, tvdb_item):
         for season, episodes in tvdb_item.seasons.iteritems():
@@ -104,22 +119,15 @@ class Series(models.Model):
                 episode.update_from_tvdb(e)
 
 
-class Episode(models.Model):
+class Episode(BaseTvDBItem):
 
     series = models.ForeignKey(Series)
     season = models.PositiveIntegerField()
     number = models.PositiveIntegerField()
-    name = models.TextField()
-    overview = models.TextField()
-    first_aired = models.DateField(null=True)
     image = models.URLField()
-    tvdb_id = models.CharField(max_length=256)
-    imdb_id = models.CharField(max_length=256)
     guest_stars = models.TextField(null=True)
     writer = models.TextField(null=True)
     director = models.TextField(null=True)
-
-    last_updated = models.DateTimeField(null=True)
 
     class Meta:
         unique_together = ('series', 'season', 'number')
@@ -134,7 +142,7 @@ class Episode(models.Model):
 
     def update_from_tvdb(self, tvdb_item, extended=False):
         attrs = (
-            'director', 'image', 'name', 'overview', 'writer',
+            'director', 'image', 'name', 'overview', 'writer', 'imdb_id',
         )
         for attr in attrs:
             self._blank_if_none(attr, getattr(tvdb_item, attr))
@@ -142,8 +150,7 @@ class Episode(models.Model):
         if tvdb_item.guest_stars:
             self.guest_stars = ', '.join(tvdb_item.guest_stars)
 
-        self.last_updated = datetime.utcnow()
-        self.save()
+        super(Episode, self).update_from_tvdb(tvdb_item, extended)
 
     @property
     def already_aired(self):

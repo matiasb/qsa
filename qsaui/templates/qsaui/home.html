@@ -32,9 +32,11 @@
 <ul class="list-group">
 {% for episode_by_day in episodes_by_day %}
     <li class="list-group-item">
-        <p class="badge">{{ episode_by_day.grouper }}<p>
+        <p class="badge">{{ episode_by_day.grouper }}</p>
         {% for episode in episode_by_day.list %}
-        {% include "qsaui/_episode_entry.html" %}
+        <p><strong>{{ episode.series.name }}</strong><br/>
+        {% include "qsaui/_episode_summary.html" %}
+        </p>
         {% endfor %}
     </li>
 {% empty %}

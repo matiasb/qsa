@@ -1,0 +1,7 @@
+{% load staticfiles %}
+
+        {% if item.imdb_url %}
+            <a href="{{ item.imdb_url }}">
+                <img width="30" alt="IMDb" title="View on IMDb" src="{% static 'images/imdb.png' %}"/>
+            </a>
+        {% endif %}

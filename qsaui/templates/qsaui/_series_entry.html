@@ -10,6 +10,8 @@
             <small>{{ series.first_aired.year }} | {{ series.network|default:"-" }} |
                 {{ series.completed|yesno:"Finished,On going, Unknown" }} |
                 <a href="{% url 'series-detail' tvdb_id %}">Details</a></small>
+                <br/>
+                {% include 'qsaui/_imdb_url.html' with item=series %}
         </p>
         {% if series.seasons %}
         <div>

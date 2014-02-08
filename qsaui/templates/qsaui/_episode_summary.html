@@ -1,4 +1,8 @@
-    {% if episode %}{{ episode }}: {{ episode.name }} ({{ episode.first_aired }})
-    | <a href="{{ episode.torrent_url }}">Search</a>
-    {% else %}Unknown
+    {% if episode %}
+      <a href="{% url 'series-episodes' episode.series.tvdb_id episode.season %}#{{ episode.number }}">{{ episode }}</a>:
+      {{ episode.name }} ({{ episode.first_aired }})
+      {% include 'qsaui/_imdb_url.html' with item=episode %}
+      {% include 'qsaui/_torrent_url.html' %}
+    {% else %}
+      Unknown
     {% endif %}
