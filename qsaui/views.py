@@ -86,7 +86,13 @@ def add_to_watchlist(request, series):
 @require_GET
 @login_required
 def series_episodes(request, tvdb_id, season):
+    season = int(season)
     series = get_object_or_404(Series, tvdb_id=tvdb_id)
+    seasons = list(series.seasons())
     episodes = Episode.objects.filter(season=season, series=series)
-    context = dict(episodes=episodes, series=series, season=season)
+    context = dict(
+        episodes=episodes.order_by('number'), series=series, season=season,
+        seasons=seasons,
+        prev_season=None if season == 1 else season - 1,
+        next_season=None if season == seasons[-1] else season + 1)
     return TemplateResponse(request, 'qsaui/episodes.html', context)

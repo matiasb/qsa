@@ -53,10 +53,8 @@ class Series(models.Model):
         episodes = self.episode_set
         if not with_specials:
             episodes = episodes.exclude(season=0)
-        return episodes.distinct().values_list('season', flat=True)
-
-    def episodes(self, with_specials=False):
-        """Return a dictionary of seasons with a list of episodes."""
+        seasons = episodes.distinct().values_list('season', flat=True)
+        return seasons.order_by('season')
 
     @property
     def next_episode(self):

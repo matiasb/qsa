@@ -1,2 +1,2 @@
-qsa/qsa/settings/__init__.py:1: 'from base import *' used; unable to detect undefined names
-qsa/qsa/settings/__init__.py:4: 'from local import *' used; unable to detect undefined names
+qsa/settings/__init__.py:1: 'from base import *' used; unable to detect undefined names
+qsa/settings/__init__.py:4: 'from local import *' used; unable to detect undefined names

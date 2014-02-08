@@ -1,14 +1,39 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block content-title %}{{ series.name }} - Season {{ season }}{% endblock %}
+{% block content-title %}{{ series.name }}{% endblock %}
 
 {% block inner-content %}
 
+<div class="text-center">
+
+<ul class="pagination pagination-sm">
+  {% if prev_season %}
+  <li><a href=  "{% url 'series-episodes' series.tvdb_id prev_season %}">&laquo;</a></li>
+  {% else %}
+  <li class="disabled"><span>&laquo;</span></li>
+  {% endif %}
+
+  {% for s in seasons %}
+  <li class="{% ifequal s season %}active{% endifequal %}">
+    <a href="{% url 'series-episodes' series.tvdb_id s %}">Season {{ s }}</a>
+  </li>
+  {% endfor %}
+
+  {% if next_season %}
+  <li><a href=  "{% url 'series-episodes' series.tvdb_id next_season %}">&raquo;</a></li>
+  {% else %}
+  <li class="disabled"><span>&raquo;</span></li>
+  {% endif %}
+</ul>
+</div>
+
+<div>
 {% for episode in episodes %}
     {% include "qsaui/_episode_entry.html" %}
 {% empty %}
     <p>No episodes reported for the season {{ season }}.</p>
 {% endfor %}
+</div>
 
 {% endblock inner-content %}

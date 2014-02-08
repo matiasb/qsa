@@ -32,7 +32,7 @@
           <dt>Episodes</dt>
           <dd>
             {% for season in seasons %}
-                <a href="{% url 'series-episodes' series.tvdb_id season%}">Season {{ season }}</a>
+                <a href="{% url 'series-episodes' series.tvdb_id season %}">Season {{ season }}</a>
                 {% if not forloop.last %}<br/>{% endif %}
             {% endfor %}
           </dd>
