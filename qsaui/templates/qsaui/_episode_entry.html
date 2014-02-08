@@ -9,9 +9,8 @@
             <a href="{% url 'series-detail' episode.series.tvdb_id %}">{{ episode.series.name }}</a> {{ episode }}: {{ episode.name }}
         </h4>
         <p>{{ episode.first_aired }}
-           {% if episode.already_aired %} |
-           <a href="{{ episode.torrent_url }}">Search</a>
-           {% endif %}
+           {% include 'qsaui/_imdb_url.html' with item=episode %}
+           {% include 'qsaui/_torrent_url.html' %}
         </p>
         <p><small>{{ episode.overview }}</small></p>
         <p><small>
