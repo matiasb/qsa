@@ -41,18 +41,27 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
-                <li><form action="{% url 'search' %}" method="GET" class="navbar-form" role="search">
+                <li>
+                  <form action="{% url 'search' %}" method="GET" class="navbar-form" role="search">
                     <div class="form-group">
                         <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="Search series">
                     </div>
-                </form></li>
-                <li><p class="navbar-text navbar-right">
-                    <a href="{% url 'account_email' %}" class="navbar-link"><span class="glyphicon glyphicon-user"></span> {{ user }}</a>
-                </p></li>
-                <li><p class="navbar-text navbar-right">
-                    <a href="{% url 'your-watchlist' %}" class="navbar-link">{% blocktrans %}Your watchlist{% endblocktrans %}</a>
-                </p></li>
-                <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+                  </form>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user"></span> {{ user }} <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu">
+                    {% if user.is_staff %}
+                    <li><a href="{% url 'update-catalogue' %}" class="navbar-link">{% blocktrans %}Update catalogue{% endblocktrans %}</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'your-watchlist' %}" class="navbar-link">{% blocktrans %}Your watchlist{% endblocktrans %}</a></li>
+                    <li><a href="{% url 'account_email' %}" class="navbar-link">{% blocktrans %}Your emails{% endblocktrans %}</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+                  </ul>
+                </li>
                 {% else %}
                 <li><a href="{% url 'account_login' %}">{% trans "Sign In" %}</a></li>
                 <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
