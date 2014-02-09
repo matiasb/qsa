@@ -1,3 +1,5 @@
+{% load qsaui_tags %}
+
 <div class="media" id="{{ episode.number }}">
     {% if episode.image %}
         <div class="pull-left">
@@ -11,7 +13,7 @@
         </h4>
         <p>{{ episode.first_aired }}
            {% include 'qsaui/_torrent_url.html' %}
-           {% include 'qsaui/_rating.html' with item=episode %}
+           {% rating_as_stars episode %}
         </p>
         <p><small>{{ episode.overview }}</small></p>
         <p><small>
