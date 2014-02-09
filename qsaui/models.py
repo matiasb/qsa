@@ -16,6 +16,8 @@ class BaseTvDBItem(models.Model):
     name = models.TextField()
     overview = models.TextField()
     first_aired = models.DateField(null=True)
+    rating = models.FloatField(null=True)
+    rating_count = models.PositiveIntegerField(null=True)
     tvdb_id = models.CharField(max_length=256)
     imdb_id = models.CharField(max_length=256)
 
@@ -29,7 +31,23 @@ class BaseTvDBItem(models.Model):
         if self.imdb_id:
             return 'http://www.imdb.com/title/%s/' % self.imdb_id
 
+    def _blank_if_none(self, attr, value):
+        if value is None:
+            value = ''
+        setattr(self, attr, value)
+
+    def _update_text_attrs(self, attrs):
+        for attr in attrs:
+            setattr(self, attr, self._blank_if_none(getattr(tvdb_item, attr)))
+
     def update_from_tvdb(self, tvdb_item=None, extended=True):
+        attrs = ('name', 'overview', 'imdb_id')
+        for attr in attrs:
+            self._blank_if_none(attr, getattr(tvdb_item, attr))
+
+        self.rating = tvdb_item.rating
+        self.rating_count = tvdb_item.rating_count
+
         self.last_updated = datetime.utcnow()
         self.save()
 
@@ -91,25 +109,21 @@ class Series(BaseTvDBItem):
         if tvdb_item is None:
             client = tvdbpy.TvDB(settings.TVDBPY_API_KEY)
             tvdb_item = client.get_series_by_id(
-                self.tvdb_id, full_record=extended)
+                self.tvdb_id, extended=extended)
 
-        attrs = (
-            'name', 'overview', 'first_aired', 'runtime',  'network',
-            'poster', 'banner', 'imdb_id',
-        )
-        for attr in attrs:
-            setattr(self, attr, getattr(tvdb_item, attr))
+        self._update_text_attrs(
+            ('first_aired', 'runtime',  'network', 'poster', 'banner'))
 
         self.cast = ', '.join(tvdb_item.actors)
         self.tags = ', '.join(tvdb_item.genre)
 
         self.completed = (tvdb_item.status.lower() == 'ended')
 
+        super(Series, self).update_from_tvdb(tvdb_item, extended)
+
         if extended:
             # load seasons, which are already fetched
             self._fetch_episodes(tvdb_item)
-
-        super(Series, self).update_from_tvdb(tvdb_item, extended)
 
     def _fetch_episodes(self, tvdb_item):
         for season, episodes in tvdb_item.seasons.iteritems():
@@ -126,7 +140,7 @@ class Episode(BaseTvDBItem):
     number = models.PositiveIntegerField()
     image = models.URLField()
     guest_stars = models.TextField(null=True)
-    writer = models.TextField(null=True)
+    writers = models.TextField(null=True)
     director = models.TextField(null=True)
 
     class Meta:
@@ -135,20 +149,14 @@ class Episode(BaseTvDBItem):
     def __unicode__(self):
         return 'S%02dE%02d' % (self.season, self.number)
 
-    def _blank_if_none(self, attr, value):
-        if value is None:
-            value = ''
-        setattr(self, attr, value)
-
     def update_from_tvdb(self, tvdb_item, extended=False):
-        attrs = (
-            'director', 'image', 'name', 'overview', 'writer', 'imdb_id',
-        )
-        for attr in attrs:
-            self._blank_if_none(attr, getattr(tvdb_item, attr))
+        self._update_text_attrs(('director', 'image'))
         self.first_aired = tvdb_item.first_aired
-        if tvdb_item.guest_stars:
-            self.guest_stars = ', '.join(tvdb_item.guest_stars)
+
+        for attr in ('guest_stars', 'writers'):
+            value = getattr(tvdb_item, att)
+            if value:
+                setattr(self, attr, ', '.join(value))
 
         super(Episode, self).update_from_tvdb(tvdb_item, extended)
 
