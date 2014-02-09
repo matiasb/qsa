@@ -11,6 +11,7 @@
         </h4>
         <p>{{ episode.first_aired }}
            {% include 'qsaui/_torrent_url.html' %}
+           {% include 'qsaui/_rating.html' with item=episode %}
         </p>
         <p><small>{{ episode.overview }}</small></p>
         <p><small>

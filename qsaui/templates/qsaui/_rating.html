@@ -1,0 +1,6 @@
+{% if item.rating %}
+    {% for star in item.stars %}
+    <span class="glyphicon glyphicon-star{% if not star %}-empty{% endif %}"></span>
+    {% endfor %}
+    {{ item.rating }} ({{ item.rating_count }} votes)
+{% endif %}

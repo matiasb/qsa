@@ -29,6 +29,9 @@
           <dt>Last updated on</dt>
           <dd>{{ series.last_updated|default:"Unknown" }}</dd>
 
+          <dt>Rating</dt>
+          <dd>{% include 'qsaui/_rating.html' with item=series %}</dd>
+
           <dt>Episodes</dt>
           <dd>
             {% for season in seasons %}
