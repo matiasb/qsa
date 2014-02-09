@@ -79,8 +79,8 @@ class CatalogueUpdater(object):
                 item_name = '%s %s' % (series.name, item_name)
 
             update_time = update.timestamp.isoformat()
-            msg = 'Processing %s"%s" (update from %s).\n'
-            self.stdout.write(msg % (new, item_name, update_time))
+            self.stdout.write(
+                '%s"%s" (update from %s)\n' % (new, item_name, update_time))
             item.update_from_tvdb(tvdb_item=tvdb_item, extended=False)
 
             return item

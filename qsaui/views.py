@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import linebreaksbr
 from django.template.response import TemplateResponse
 from django.views.decorators.http import (
     require_GET,
@@ -73,9 +74,13 @@ def update_catalogue(request):
                     ' and '.join(
                         '%s %s' % (len(v), k) for k, v in updated.iteritems()),
                     period)
+                messages.success(request, msg)
+
+                detail = 'Updated items are:\n' + output.getvalue()
+                messages.info(request, linebreaksbr(detail))
             else:
                 msg = 'Nothing to update (checked %s).' % period
-            messages.success(request, output.getvalue() + msg)
+                messages.success(request, msg)
 
             return HttpResponseRedirect(reverse('home'))
     else:
