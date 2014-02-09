@@ -1,13 +1,22 @@
+from StringIO import StringIO
+
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import linebreaksbr
 from django.template.response import TemplateResponse
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import (
+    require_GET,
+    require_http_methods,
+)
 from tvdbpy import TvDB
 
+from qsaui.forms import UpdateCatalogueForm
 from qsaui.models import Series, Episode
+from qsaui.utils import CatalogueUpdater
 
 
 @require_GET
@@ -46,6 +55,38 @@ def search(request):
 
     context = dict(result=result, q=q)
     return TemplateResponse(request, 'qsaui/results.html', context)
+
+
+@require_http_methods(['GET', 'POST'])
+@staff_member_required
+def update_catalogue(request):
+    if request.method == 'POST':
+        form = UpdateCatalogueForm(request.POST)
+        if form.is_valid():
+            period = form.cleaned_data['period']
+            output = StringIO()
+            updated, unknown = CatalogueUpdater(stdout=output).update(
+                period=period)
+
+            period = 'last %s' % period if period != 'all' else 'everything'
+            if updated:
+                msg = 'Successfully updated %s (checked %s).' % (
+                    ' and '.join(
+                        '%s %s' % (len(v), k) for k, v in updated.iteritems()),
+                    period)
+                messages.success(request, msg)
+
+                detail = 'Updated items are:\n' + output.getvalue()
+                messages.info(request, linebreaksbr(detail))
+            else:
+                msg = 'Nothing to update (checked %s).' % period
+                messages.success(request, msg)
+
+            return HttpResponseRedirect(reverse('home'))
+    else:
+        form = UpdateCatalogueForm()
+
+    return TemplateResponse(request, 'qsaui/update.html', dict(form=form))
 
 
 @require_http_methods(['GET', 'POST'])

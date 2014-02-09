@@ -56,11 +56,16 @@
 
     <div class="col-md-2 text-center">
         <p><img class="center-block media-object" src="{{ series.poster }}" width="120" /></p>
-        {% with series.tvdb_id as tvdb_id %}
-            {% include 'qsaui/_add-to-watchlist.html' %}
-            {% include 'qsaui/_reindex.html' %}
-        {% endwith %}
+        {% include 'qsaui/_add-to-watchlist.html' with tvdb_id=series.tvdb_id %}
         <p>{% include 'qsaui/_imdb_url.html' with item=series %}</p>
+        {% if user.is_staff %}
+        <p><form action="{% url 'series-detail' series.tvdb_id %}" method="POST">
+            {% csrf_token %}
+            <div class="btn-group">
+                <button type="submit" name="update" class="btn btn-xs btn-default">Update from TvDB</button>
+            </div>
+        </form></p>
+        {% endif %}
     </div>
 
 </div>
