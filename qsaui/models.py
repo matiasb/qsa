@@ -34,7 +34,8 @@ class BaseTvDBItem(models.Model):
     @property
     def stars(self):
         if self.rating:
-            return [True if i <= self.rating else False for i in xrange(1, 11)]
+            return [True if i <= round(self.rating) else False
+                    for i in xrange(1, 11)]
 
     def _update_text_attrs(self, attrs, tvdb_item):
         for attr in attrs:
