@@ -7,45 +7,31 @@ from south.v2 import SchemaMigration
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Renaming field 'Episode.writer' to 'Episode.writers'
-        db.rename_column(u'qsaui_episode', 'writer', 'writers')
+        # Adding unique constraint on 'Episode', fields ['tvdb_id']
+        db.create_unique(u'qsaui_episode', ['tvdb_id'])
 
-        # Adding field 'Episode.rating'
-        db.add_column(u'qsaui_episode', 'rating',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
-                      keep_default=False)
+        # Adding unique constraint on 'Episode', fields ['imdb_id']
+        db.create_unique(u'qsaui_episode', ['imdb_id'])
 
-        # Adding field 'Episode.rating_count'
-        db.add_column(u'qsaui_episode', 'rating_count',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(null=True),
-                      keep_default=False)
+        # Adding unique constraint on 'Series', fields ['tvdb_id']
+        db.create_unique(u'qsaui_series', ['tvdb_id'])
 
-        # Adding field 'Series.rating'
-        db.add_column(u'qsaui_series', 'rating',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
-                      keep_default=False)
-
-        # Adding field 'Series.rating_count'
-        db.add_column(u'qsaui_series', 'rating_count',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(null=True),
-                      keep_default=False)
+        # Adding unique constraint on 'Series', fields ['imdb_id']
+        db.create_unique(u'qsaui_series', ['imdb_id'])
 
 
     def backwards(self, orm):
-        # Renaming field 'Episode.writers' to 'Episode.writer'
-        db.rename_column(u'qsaui_episode', 'writers', 'writer')
+        # Removing unique constraint on 'Series', fields ['imdb_id']
+        db.delete_unique(u'qsaui_series', ['imdb_id'])
 
-        # Deleting field 'Episode.rating'
-        db.delete_column(u'qsaui_episode', 'rating')
+        # Removing unique constraint on 'Series', fields ['tvdb_id']
+        db.delete_unique(u'qsaui_series', ['tvdb_id'])
 
-        # Deleting field 'Episode.rating_count'
-        db.delete_column(u'qsaui_episode', 'rating_count')
+        # Removing unique constraint on 'Episode', fields ['imdb_id']
+        db.delete_unique(u'qsaui_episode', ['imdb_id'])
 
-        # Deleting field 'Series.rating'
-        db.delete_column(u'qsaui_series', 'rating')
-
-        # Deleting field 'Series.rating_count'
-        db.delete_column(u'qsaui_series', 'rating_count')
+        # Removing unique constraint on 'Episode', fields ['tvdb_id']
+        db.delete_unique(u'qsaui_episode', ['tvdb_id'])
 
 
     models = {
@@ -92,7 +78,7 @@ class Migration(SchemaMigration):
             'guest_stars': ('django.db.models.fields.TextField', [], {'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
-            'imdb_id': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'imdb_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'}),
             'last_updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'name': ('django.db.models.fields.TextField', [], {}),
             'number': ('django.db.models.fields.PositiveIntegerField', [], {}),
@@ -101,7 +87,7 @@ class Migration(SchemaMigration):
             'rating_count': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
             'season': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'series': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['qsaui.Series']"}),
-            'tvdb_id': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'tvdb_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'}),
             'writers': ('django.db.models.fields.TextField', [], {'null': 'True'})
         },
         u'qsaui.series': {
@@ -111,7 +97,7 @@ class Migration(SchemaMigration):
             'completed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'first_aired': ('django.db.models.fields.DateField', [], {'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'imdb_id': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'imdb_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'}),
             'last_updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'name': ('django.db.models.fields.TextField', [], {}),
             'network': ('django.db.models.fields.TextField', [], {}),
@@ -121,7 +107,7 @@ class Migration(SchemaMigration):
             'rating_count': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
             'runtime': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
             'tags': ('django.db.models.fields.TextField', [], {}),
-            'tvdb_id': ('django.db.models.fields.CharField', [], {'max_length': '256'})
+            'tvdb_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
         },
         u'qsaui.watcher': {
             'Meta': {'object_name': 'Watcher'},

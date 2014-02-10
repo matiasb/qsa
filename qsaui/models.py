@@ -18,8 +18,8 @@ class BaseTvDBItem(models.Model):
     first_aired = models.DateField(null=True)
     rating = models.FloatField(null=True)
     rating_count = models.PositiveIntegerField(null=True)
-    tvdb_id = models.CharField(max_length=256)
-    imdb_id = models.CharField(max_length=256)
+    tvdb_id = models.CharField(max_length=256, unique=True)
+    imdb_id = models.CharField(max_length=256, unique=True)
 
     last_updated = models.DateTimeField(null=True)
 
