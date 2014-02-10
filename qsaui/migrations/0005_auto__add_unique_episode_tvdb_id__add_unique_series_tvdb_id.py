@@ -10,25 +10,13 @@ class Migration(SchemaMigration):
         # Adding unique constraint on 'Episode', fields ['tvdb_id']
         db.create_unique(u'qsaui_episode', ['tvdb_id'])
 
-        # Adding unique constraint on 'Episode', fields ['imdb_id']
-        db.create_unique(u'qsaui_episode', ['imdb_id'])
-
         # Adding unique constraint on 'Series', fields ['tvdb_id']
         db.create_unique(u'qsaui_series', ['tvdb_id'])
 
-        # Adding unique constraint on 'Series', fields ['imdb_id']
-        db.create_unique(u'qsaui_series', ['imdb_id'])
-
 
     def backwards(self, orm):
-        # Removing unique constraint on 'Series', fields ['imdb_id']
-        db.delete_unique(u'qsaui_series', ['imdb_id'])
-
         # Removing unique constraint on 'Series', fields ['tvdb_id']
         db.delete_unique(u'qsaui_series', ['tvdb_id'])
-
-        # Removing unique constraint on 'Episode', fields ['imdb_id']
-        db.delete_unique(u'qsaui_episode', ['imdb_id'])
 
         # Removing unique constraint on 'Episode', fields ['tvdb_id']
         db.delete_unique(u'qsaui_episode', ['tvdb_id'])
