@@ -64,6 +64,7 @@ def update_catalogue(request):
         form = UpdateCatalogueForm(request.POST)
         if form.is_valid():
             period = form.cleaned_data['period']
+
             output = StringIO()
             updated, unknown = CatalogueUpdater(stdout=output).update(
                 period=period)
@@ -76,7 +77,7 @@ def update_catalogue(request):
                     period)
                 messages.success(request, msg)
 
-                detail = 'Updated items are:\n' + output.getvalue()
+                detail = 'Updated items:\n' + output.getvalue()
                 messages.info(request, linebreaksbr(detail))
             else:
                 msg = 'Nothing to update (checked %s).' % period

@@ -7,7 +7,7 @@ UPDATE_CHOICES = [
     (TvDB.DAY, 'Last day'),
     (TvDB.WEEK, 'Last week'),
     (TvDB.MONTH, 'Last month'),
-    (TvDB.ALL, 'All'),
+    (TvDB.ALL, 'All series'),
 ]
 
 

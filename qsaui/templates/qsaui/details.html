@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load qsaui_tags %}
 
 {% block content-title %}{{ series.name }}{% endblock %}
 
@@ -28,6 +29,9 @@
 
           <dt>Last updated on</dt>
           <dd>{{ series.last_updated|default:"Unknown" }}</dd>
+
+          <dt>Rating</dt>
+          <dd>{% rating_as_stars series %}</dd>
 
           <dt>Episodes</dt>
           <dd>

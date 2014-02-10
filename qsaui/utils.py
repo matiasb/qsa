@@ -20,6 +20,21 @@ class CatalogueUpdater(object):
         self.stdout = stdout
 
     def update(self, period=tvdbpy.TvDB.WEEK):
+        if period == tvdbpy.TvDB.ALL:
+            return self.update_all_series()
+        else:
+            return self.update_from_period(period)
+
+    def update_all_series(self):
+        updated = []
+        for series in Series.objects.all():
+            series.update_from_tvdb(extended=True)
+            updated.append(series.name)
+            self.stdout.write('"%s"\n' % series.name)
+
+        return {tvdbpy.TvDB.SERIES: updated}, {}
+
+    def update_from_period(self, period):
         updated = defaultdict(list)
         unknown = defaultdict(int)
 
