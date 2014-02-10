@@ -23,14 +23,14 @@ class SeriesAdmin(admin.ModelAdmin):
     list_display = (
         'name', 'runtime', 'network', 'tvdb_id', 'imdb_id', 'completed')
     list_filter = ('runtime', 'network', 'completed')
-    search_fields = ('name',)
+    search_fields = ('name', 'tvdb_id', 'imdb_id')
 
 
 class EpisodeAdmin(admin.ModelAdmin):
     date_hierarchy = 'first_aired'
     list_display = ('series', 'season', 'number', 'tvdb_id', 'imdb_id')
     list_filter = ('series', 'season')
-    search_fields = ('series__name', 'season')
+    search_fields = ('series__name', 'season', 'tvdb_id', 'imdb_id')
 
 
 admin.site.register(Episode, EpisodeAdmin)
