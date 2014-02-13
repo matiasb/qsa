@@ -1,16 +1,30 @@
 from __future__ import unicode_literals
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+
+from tvdbpy import TvDB
 
 from qsaui.utils import CatalogueUpdater
 
 
 class Command(BaseCommand):
 
+    periods = [TvDB.DAY, TvDB.WEEK, TvDB.MONTH, TvDB.ALL]
+    args = '[%s]' % '|'.join(periods)
     help = 'Update all the series that changed in the last week.'
 
     def handle(self, *args, **options):
-        updated, unknown = CatalogueUpdater(stdout=self.stdout).update()
+        try:
+            period = args[0]
+        except IndexError:
+            period = TvDB.WEEK
+
+        if period not in self.periods:
+            raise CommandError(
+                'Invalid period %r, should be one of %s' % (period, self.args))
+
+        updated, unknown = CatalogueUpdater(stdout=self.stdout).update(
+            period=period)
 
         if unknown:
             stats = ' and '.join(
