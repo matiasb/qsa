@@ -59,49 +59,36 @@ class CatalogueUpdater(object):
 
         return updated, unknown
 
-    def _update_item(self, update, item_class):
-        new = ''
-        tvdb_item = None
-
-        try:
-            item = item_class.objects.get(tvdb_id=update.id)
-        except item_class.DoesNotExist:
-            item = None
-
-        series = None
-        if update.kind == tvdbpy.TvDB.EPISODE:
-            try:  # may be a new Episode!
-                series = Series.objects.get(tvdb_id=update.series)
-            except Series.DoesNotExist:
-                return
-
-        # the series exists in our DB but the episode does not -- new episode
-        if item is None and series is not None:
-            tvdb_item = update.get_updated_item()
-            item = Episode.objects.create(
-                tvdb_id=tvdb_item.id, series=series, season=tvdb_item.season,
-                number=tvdb_item.number)
-            new = 'new episode '
-
-        if (item is not None and item.last_updated is not None and
-                item.last_updated < update.timestamp):
+    def _update_item(self, update, item, created=False):
+        assert item is not None
+        if item.last_updated is None or item.last_updated < update.timestamp:
             # item needs update
-            if tvdb_item is None:
-                tvdb_item = update.get_updated_item()
-
-            item_name = unicode(item)
-            if series is not None:
-                item_name = '%s %s' % (series.name, item_name)
+            tvdb_item = update.get_updated_item()
+            item.update_from_tvdb(tvdb_item=tvdb_item, extended=False)
 
             update_time = update.timestamp.isoformat()
+            new = 'New ' if created else ''
             self.stdout.write(
-                '%s"%s" (update from %s)\n' % (new, item_name, update_time))
-            item.update_from_tvdb(tvdb_item=tvdb_item, extended=False)
+                '%s"%s" (update from %s)\n' % (new, item, update_time))
 
             return item
 
     def update_series(self, update):
-        return self._update_item(update, Series)
+        try:
+            series = Series.objects.get(tvdb_id=update.id)
+        except Series.DoesNotExist:
+            return
+
+        return self._update_item(update, series)
 
     def update_episode(self, update):
-        return self._update_item(update, Episode)
+        try:  # process this episode only if we know the series linked to it
+            series = Series.objects.get(tvdb_id=update.series)
+        except Series.DoesNotExist:
+            return
+
+        episode, created = Episode.objects.get_or_create(
+            series=series, tvdb_id=update.id,
+            defaults=dict(season=0, number=0))
+
+        return self._update_item(update, episode, created)

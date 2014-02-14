@@ -144,9 +144,12 @@ class Episode(BaseTvDBItem):
         unique_together = ('series', 'season', 'number')
 
     def __unicode__(self):
-        return 'S%02dE%02d' % (self.season, self.number)
+        return '%s %s' % (self.series.name, self.short_name)
 
     def update_from_tvdb(self, tvdb_item, extended=False):
+        self.season = tvdb_item.season
+        self.number = tvdb_item.number
+
         self._update_text_attrs(('director', 'image'), tvdb_item)
 
         for attr in ('guest_stars', 'writers'):
@@ -162,9 +165,12 @@ class Episode(BaseTvDBItem):
 
     @property
     def torrent_url(self):
-        search_term = '%s %s' % (self.series.name, unicode(self))
-        search_term = urllib.quote(search_term)
+        search_term = urllib.quote(unicode(self))
         return 'http://thepiratebay.se/search/%s/0/7/0' % search_term
+
+    @property
+    def short_name(self):
+        return 'S%02dE%02d' % (self.season, self.number)
 
 
 class Watcher(models.Model):

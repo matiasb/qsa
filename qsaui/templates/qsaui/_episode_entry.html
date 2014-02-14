@@ -8,10 +8,12 @@
     {% endif %}
     <div class="media-body">
         <h4 class="media-heading">
-            <a href="{% url 'series-detail' episode.series.tvdb_id %}">{{ episode.series.name }}</a> {{ episode }}: {{ episode.name }}
+            <a href="{% url 'series-detail' episode.series.tvdb_id %}">
+                {{ episode.series.name }}</a>
+            {{ episode.short_name }}: {{ episode.name }}
            {% include 'qsaui/_imdb_url.html' with item=episode %}
         </h4>
-        <p>{{ episode.first_aired }}
+        <p>{{ episode.first_aired|default:"Aired date not known yet" }}
            {% include 'qsaui/_torrent_url.html' %}
            {% rating_as_stars episode %}
         </p>

@@ -19,10 +19,13 @@
           <dd>{{ series.tags }}</dd>
 
           <dt>First aired date</dt>
-          <dd>{{ series.first_aired }}</dd>
+          <dd>{{ series.first_aired|default:"Aired date not known yet" }}</dd>
 
           <dt>Runtime</dt>
           <dd>{{ series.runtime }} minutes</dd>
+
+          <dt>Network</dt>
+          <dd>{{ series.network }}</dd>
 
           <dt>Finished?</dt>
           <dd>{{ series.completed|yesno }}</dd>
