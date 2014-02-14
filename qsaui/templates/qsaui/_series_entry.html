@@ -31,5 +31,12 @@
             {% endif %}
         </div>
         {% endif %}
+<form action="{% url 'series-detail' tvdb_id %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{% url 'your-watchlist' %}">
+    <div class="btn-group">
+        <button type="submit" name="remove-from-watchlist" class="btn btn-xs btn-default">Remove from watchlist</button>
+    </div>
+</form>
     </div>
 </div>

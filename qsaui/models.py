@@ -89,17 +89,15 @@ class Series(BaseTvDBItem):
 
     @property
     def next_episode(self):
-        episodes = self.episode_set.filter(
-            first_aired__gt=datetime.utcnow()).order_by('first_aired')
+        episodes = self.episode_set.filter(first_aired__gt=datetime.utcnow())
         if episodes.exists():
-            return episodes[0]
+            return episodes.order_by('first_aired', 'number')[0]
 
     @property
     def last_episode(self):
-        episodes = self.episode_set.filter(
-            first_aired__lte=datetime.utcnow()).order_by('-first_aired')
+        episodes = self.episode_set.filter(first_aired__lte=datetime.utcnow())
         if episodes.exists():
-            return episodes[0]
+            return episodes.order_by('-first_aired', '-number')[0]
 
     def update_from_tvdb(self, tvdb_item=None, extended=True):
         """Update this instance using the remote info from TvDB site."""
