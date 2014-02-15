@@ -187,6 +187,11 @@ class Watcher(models.Model):
             series__in=self.series.all(),
             first_aired__range=(today, a_week_from_now))
 
+    def episodes_coming_soon(self):
+        today = datetime.utcnow().date()
+        return Episode.objects.filter(
+            series__in=self.series.all(), first_aired__gte=today)
+
     def episodes_from_last_week(self):
         today = datetime.utcnow().date()
         a_week_ago = today - timedelta(weeks=1)

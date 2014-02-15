@@ -27,8 +27,8 @@ def home(request):
         yesterday=watcher.episodes_from_yesterday().order_by('name'),
         last_week=watcher.episodes_from_last_week().order_by(
             '-first_aired', 'name'),
-        next_week=watcher.episodes_for_next_week().order_by(
-            'first_aired', 'name'),
+        coming_soon=watcher.episodes_coming_soon().order_by(
+            'first_aired', 'name')[:7],
     )
     return TemplateResponse(request, 'qsaui/home.html', context)
 
