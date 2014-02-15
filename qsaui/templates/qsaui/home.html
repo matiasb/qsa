@@ -1,10 +1,70 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load humanize %}
+{% load staticfiles %}
 
-{% block content-title %}Episodes from last night{% endblock %}
+{% block head-extra %}
+    <script type="text/javascript" src="{% static 'js/fullcalendar.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/fullcalendar.css' %}" />
 
-{% block inner-content %}
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        function showCalendar(selector, config) {
+            var d = new Date();
+            var starting = (7 + d.getUTCDay() - 1) % 7;  // starting yesterday
+            var days = 3;  // number of days to show
+            var hidden = [];
+            for (i = days; i < 7; i++){
+                hidden.push((starting + i) % 7);
+            }
+            var options = {
+                header: '',
+                columnFormat: {week: 'ddd d/M'},
+                height: 150,
+                firstDay: starting,
+                hiddenDays: hidden,
+                defaultView: 'basicWeek'
+            };
+            $.extend(options, config);
+            $(selector).fullCalendar(options);
+        }
+
+        showCalendar(
+            '#calendar', {
+                events: [
+                    {% for e in last_week %}
+                {
+                    title: '{{ e }}',
+                    start: '{{ e.first_aired|date:"Y-m-d" }}'
+                },
+                    {% endfor %}
+                    {% for e in yesterday %}
+                {
+                    title: '{{ e }}',
+                    start: '{{ e.first_aired|date:"Y-m-d" }}'
+                },
+                    {% endfor %}
+                    {% for e in next_week %}
+                {
+                    title: '{{ e }}',
+                    start: '{{ e.first_aired|date:"Y-m-d" }}'
+                },
+                    {% endfor %}
+                ]
+            });
+    });
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div id='calendar'></div>
+
+<h3>{% trans 'Episodes from last night' %}</h3>
 
 {% for episode in yesterday %}
     {% include "qsaui/_episode_entry.html" %}
@@ -44,4 +104,4 @@
 {% endfor %}
 </ul>
 
-{% endblock inner-content %}
+{% endblock %}
