@@ -6,11 +6,49 @@
 {% block inner-content %}
 
 {% for series in watchlist %}
-    {% with series.tvdb_id as tvdb_id %}
-        {% include "qsaui/_series_entry.html" %}
-    {% endwith %}
+<div class="media">
+    {% if series.poster %}
+        <a class="pull-left" href="{% url 'series-detail' series.tvdb_id %}">
+            <img src="{{ series.poster }}" width="120" />
+        </a>
+    {% endif %}
+    <div class="media-body">
+        <h4 class="media-heading">{{ series.name }}</h4>
+        <p>
+            <small>{{ series.first_aired.year }} | {{ series.network|default:"-" }} |
+                {{ series.completed|yesno:"Finished,On going, Unknown" }} |
+                <a href="{% url 'series-detail' series.tvdb_id %}">Details</a></small>
+                <br/>
+                {% include 'qsaui/_imdb_url.html' with item=series %}
+        </p>
+        {% if series.seasons %}
+        <div>
+            <p><span class="label label-default">Last episode</span>
+            {% with episode=series.last_episode %}
+               {% include 'qsaui/_episode_summary.html' %}
+            {% endwith %}
+            </p>
+
+            {% if not series.completed %}
+            <p>
+            <span class="label label-success">Next episode</span>
+            {% with episode=series.next_episode %}
+               {% include 'qsaui/_episode_summary.html' %}
+            {% endwith %}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+        <form action="{% url 'series-detail' series.tvdb_id %}" method="POST">
+            {% csrf_token %}
+            <div class="btn-group">
+                <button type="submit" name="remove-from-watchlist" class="btn btn-xs btn-default">Remove from watchlist</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% empty %}
-    <p>You have not yet chosen any series to track!</p>
+<p>You have not yet chosen any series to track!</p>
 {% endfor %}
 
 {% endblock inner-content %}

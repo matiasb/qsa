@@ -10,7 +10,7 @@
 
         <dl class="dl-horizontal">
           <dt>Overview</dt>
-          <dd>{{ series.overview }}</dd>
+          <dd>{{ series.overview }} {% include 'qsaui/_imdb_url.html' with item=series %}</dd>
 
           <dt>Cast</dt>
           <dd>{{ series.cast }}</dd>
@@ -63,16 +63,24 @@
 
     <div class="col-md-2 text-center">
         <p><img class="center-block media-object" src="{{ series.poster }}" width="120" /></p>
-        {% include 'qsaui/_add-to-watchlist.html' with tvdb_id=series.tvdb_id %}
-        <p>{% include 'qsaui/_imdb_url.html' with item=series %}</p>
-        {% if user.is_staff %}
-        <p><form action="{% url 'series-detail' series.tvdb_id %}" method="POST">
+    </div>
+    {% if on_watchlist %}
+    <p class="text-center"><span class="label label-info">Already tracking this series</span></p>
+    {% endif %}
+    <div class="col-md-2 text-center">
+        <form action="{% url 'series-detail' series.tvdb_id %}" method="POST">
             {% csrf_token %}
-            <div class="btn-group">
+            <div class="btn-group-vertical center-block">
+                {% if not on_watchlist %}
+                <button type="submit" name="add-to-watchlist" class="btn btn-xs btn-primary">Add to watchlist</button>
+                {% else %}
+                <button type="submit" name="remove-from-watchlist" class="btn btn-xs btn-warning">Remove from watchlist</button>
+                {% endif %}
+                {% if user.is_staff %}
                 <button type="submit" name="update" class="btn btn-xs btn-default">Update from TvDB</button>
+                {% endif %}
             </div>
-        </form></p>
-        {% endif %}
+        </form>
     </div>
 
 </div>

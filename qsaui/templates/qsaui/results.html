@@ -5,9 +5,42 @@
 {% block inner-content %}
 
 {% for series, on_watchlist in result %}
-    {% include "qsaui/_series_result.html" %}
+<div class="media">
+    {% if series.banner %}
+    <div class="pull-right text-center">
+        <p><a href="{% url 'series-detail' series.id %}">
+            <img src="{{ series.banner }}" height="40" />
+        </a></p>
+        {% if on_watchlist %}
+        <p><span class="label label-info">Already tracking this series</span></p>
+        {% endif %}
+        <form action="{% url 'series-detail' series.id %}" method="POST">
+            {% csrf_token %}
+            <div class="btn-group">
+                {% if on_watchlist %}
+                <button type="submit" name="remove-from-watchlist" class="btn btn-xs btn-warning">Remove from watchlist</button>
+                {% else %}
+                <button type="submit" name="add-to-watchlist" class="btn btn-xs btn-primary">Add to watchlist</button>
+                {% endif %}
+          </div>
+        </form>
+    </div>
+    {% endif %}
+    <div class="media-body">
+        <div class="media-heading">
+            <h4>{{ series.name }}</h4>
+        </div>
+        <div>
+            <small>{{ series.first_aired.year }} | {{ series.network|default:"-" }} |
+                <a href="{% url 'series-detail' series.id %}">Details</a></small>
+            <p>
+                <small>{{ series.overview|truncatewords:50|default:"No overview available." }}</small>
+            </p>
+        </div>
+    </div>
+</div>
 {% empty %}
-    <p>No results found for "{{ q }}"</p>
+<p>No results found for "{{ q }}"</p>
 {% endfor %}
 
 {% endblock inner-content %}

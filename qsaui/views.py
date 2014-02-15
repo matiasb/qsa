@@ -24,12 +24,12 @@ from qsaui.utils import CatalogueUpdater
 def home(request):
     watcher = request.user.watcher
     context = dict(
-        yesterday=watcher.episodes_from_yesterday().order_by('name'),
-        last_week=watcher.episodes_from_last_week().order_by(
-            '-first_aired', 'name'),
-        next_week=watcher.episodes_for_next_week().order_by(
-            'first_aired', 'name'),
+        yesterday=watcher.episodes_from_yesterday(),
+        last_week=watcher.episodes_from_last_week(),
+        coming_soon=watcher.episodes_for_next_week(),
     )
+    if context['coming_soon'].count() < 5:
+        context['coming_soon'] = watcher.episodes_coming_soon()[:7]
     return TemplateResponse(request, 'qsaui/home.html', context)
 
 
@@ -97,6 +97,8 @@ def series_detail(request, tvdb_id):
     if request.method == 'POST':
         if 'add-to-watchlist' in request.POST:
             return add_to_watchlist(request, series)
+        elif 'remove-from-watchlist' in request.POST:
+            return remove_from_watchlist(request, series)
         elif 'update' in request.POST:
             return update(request, series)
         else:
@@ -122,7 +124,16 @@ def add_to_watchlist(request, series):
     request.user.watcher.series.add(series)
     messages.success(
         request, '%s successfully added to your watchlist' % series.name)
-    return HttpResponseRedirect(reverse(home))
+    return HttpResponseRedirect(
+        request.POST.get('next', reverse('your-watchlist')))
+
+
+def remove_from_watchlist(request, series):
+    request.user.watcher.series.remove(series)
+    messages.success(
+        request, '%s successfully removed from your watchlist' % series.name)
+    return HttpResponseRedirect(
+        request.POST.get('next', reverse('your-watchlist')))
 
 
 @require_GET
