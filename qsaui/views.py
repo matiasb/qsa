@@ -24,12 +24,12 @@ from qsaui.utils import CatalogueUpdater
 def home(request):
     watcher = request.user.watcher
     context = dict(
-        yesterday=watcher.episodes_from_yesterday().order_by('name'),
-        last_week=watcher.episodes_from_last_week().order_by(
-            '-first_aired', 'name'),
-        coming_soon=watcher.episodes_coming_soon().order_by(
-            'first_aired', 'name')[:7],
+        yesterday=watcher.episodes_from_yesterday(),
+        last_week=watcher.episodes_from_last_week(),
+        coming_soon=watcher.episodes_for_next_week(),
     )
+    if context['coming_soon'].count() < 5:
+        context['coming_soon'] = watcher.episodes_coming_soon()[:7]
     return TemplateResponse(request, 'qsaui/home.html', context)
 
 
