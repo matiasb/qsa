@@ -178,8 +178,8 @@ class Watcher(models.Model):
     def episodes_from_yesterday(self):
         yesterday = datetime.utcnow().date() - timedelta(days=1)
         return Episode.objects.filter(
-            series__in=self.series.all(), first_aired=yesterday).order_by(
-                'name')
+            series__in=self.series.all(),
+            first_aired=yesterday).order_by('name')
 
     def episodes_for_next_week(self):
         today = datetime.utcnow().date()
@@ -187,13 +187,13 @@ class Watcher(models.Model):
         return Episode.objects.filter(
             series__in=self.series.all(),
             first_aired__range=(today, a_week_from_now)).order_by(
-                'first_aired', 'name')
+            'first_aired', 'name')
 
     def episodes_coming_soon(self):
         today = datetime.utcnow().date()
         return Episode.objects.filter(
-            series__in=self.series.all(), first_aired__gte=today).order_by(
-                'first_aired', 'name')
+            series__in=self.series.all(),
+            first_aired__gte=today).order_by('first_aired', 'name')
 
     def episodes_from_last_week(self):
         today = datetime.utcnow().date()
@@ -202,7 +202,7 @@ class Watcher(models.Model):
         return Episode.objects.filter(
             series__in=self.series.all(),
             first_aired__range=(a_week_ago, day_before_yesterday)).order_by(
-                '-first_aired', 'name')
+            '-first_aired', 'name')
 
 
 def create_watcher(sender, instance, created, raw, **kwargs):
