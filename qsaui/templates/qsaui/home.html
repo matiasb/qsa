@@ -13,7 +13,7 @@
 {% endfor %}
 
 <h3>{% trans 'Coming soon' %}</h3>
-{% regroup next_week by first_aired as episodes_by_day %}
+{% regroup coming_soon by first_aired as episodes_by_day %}
 <ul class="list-group">
 {% for episode_by_day in episodes_by_day %}
     <li class="list-group-item">
@@ -23,7 +23,7 @@
         {% endfor %}
     </li>
 {% empty %}
-    <p>{% trans 'No episodes scheduled for next week.' %}</p>
+    <p>{% trans 'No episodes coming soon.' %}</p>
 {% endfor %}
 </ul>
 

@@ -89,17 +89,15 @@ class Series(BaseTvDBItem):
 
     @property
     def next_episode(self):
-        episodes = self.episode_set.filter(
-            first_aired__gt=datetime.utcnow()).order_by('first_aired')
+        episodes = self.episode_set.filter(first_aired__gt=datetime.utcnow())
         if episodes.exists():
-            return episodes[0]
+            return episodes.order_by('first_aired', 'number')[0]
 
     @property
     def last_episode(self):
-        episodes = self.episode_set.filter(
-            first_aired__lte=datetime.utcnow()).order_by('-first_aired')
+        episodes = self.episode_set.filter(first_aired__lte=datetime.utcnow())
         if episodes.exists():
-            return episodes[0]
+            return episodes.order_by('-first_aired', '-number')[0]
 
     def update_from_tvdb(self, tvdb_item=None, extended=True):
         """Update this instance using the remote info from TvDB site."""
@@ -180,14 +178,22 @@ class Watcher(models.Model):
     def episodes_from_yesterday(self):
         yesterday = datetime.utcnow().date() - timedelta(days=1)
         return Episode.objects.filter(
-            series__in=self.series.all(), first_aired=yesterday)
+            series__in=self.series.all(),
+            first_aired=yesterday).order_by('name')
 
     def episodes_for_next_week(self):
         today = datetime.utcnow().date()
         a_week_from_now = today + timedelta(weeks=1)
         return Episode.objects.filter(
             series__in=self.series.all(),
-            first_aired__range=(today, a_week_from_now))
+            first_aired__range=(today, a_week_from_now)).order_by(
+            'first_aired', 'name')
+
+    def episodes_coming_soon(self):
+        today = datetime.utcnow().date()
+        return Episode.objects.filter(
+            series__in=self.series.all(),
+            first_aired__gte=today).order_by('first_aired', 'name')
 
     def episodes_from_last_week(self):
         today = datetime.utcnow().date()
@@ -195,7 +201,8 @@ class Watcher(models.Model):
         day_before_yesterday = today - timedelta(days=2)
         return Episode.objects.filter(
             series__in=self.series.all(),
-            first_aired__range=(a_week_ago, day_before_yesterday))
+            first_aired__range=(a_week_ago, day_before_yesterday)).order_by(
+            '-first_aired', 'name')
 
 
 def create_watcher(sender, instance, created, raw, **kwargs):
