@@ -7,54 +7,54 @@
     <script type="text/javascript" src="{% static 'js/fullcalendar.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/fullcalendar.css' %}" />
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    $(document).ready(function() {
-        function showCalendar(selector, config) {
-            var d = new Date();
-            var starting = (7 + d.getUTCDay() - 1) % 7;  // starting yesterday
-            var days = 3;  // number of days to show
-            var hidden = [];
-            for (i = days; i < 7; i++){
-                hidden.push((starting + i) % 7);
+        $(document).ready(function() {
+            function showCalendar(selector, config) {
+                var d = new Date();
+                var starting = (7 + d.getUTCDay() - 1) % 7;  // starting yesterday
+                var days = 3;  // number of days to show
+                var hidden = [];
+                for (i = days; i < 7; i++){
+                    hidden.push((starting + i) % 7);
+                }
+                var options = {
+                    header: '',
+                    columnFormat: {week: 'ddd d/M'},
+                    height: 150,
+                    firstDay: starting,
+                    hiddenDays: hidden,
+                    defaultView: 'basicWeek'
+                };
+                $.extend(options, config);
+                $(selector).fullCalendar(options);
             }
-            var options = {
-                header: '',
-                columnFormat: {week: 'ddd d/M'},
-                height: 150,
-                firstDay: starting,
-                hiddenDays: hidden,
-                defaultView: 'basicWeek'
-            };
-            $.extend(options, config);
-            $(selector).fullCalendar(options);
-        }
 
-        showCalendar(
-            '#calendar', {
-                events: [
-                    {% for e in last_week %}
-                {
-                    title: '{{ e }}',
-                    start: '{{ e.first_aired|date:"Y-m-d" }}'
-                },
-                    {% endfor %}
-                    {% for e in yesterday %}
-                {
-                    title: '{{ e }}',
-                    start: '{{ e.first_aired|date:"Y-m-d" }}'
-                },
-                    {% endfor %}
-                    {% for e in next_week %}
-                {
-                    title: '{{ e }}',
-                    start: '{{ e.first_aired|date:"Y-m-d" }}'
-                },
-                    {% endfor %}
-                ]
-            });
-    });
-</script>
+            showCalendar(
+                '#calendar', {
+                    events: [
+                        {% for e in last_week %}
+                    {
+                        title: '{{ e }}',
+                        start: '{{ e.first_aired|date:"Y-m-d" }}'
+                    },
+                        {% endfor %}
+                        {% for e in yesterday %}
+                    {
+                        title: '{{ e }}',
+                        start: '{{ e.first_aired|date:"Y-m-d" }}'
+                    },
+                        {% endfor %}
+                        {% for e in coming_soon %}
+                    {
+                        title: '{{ e }}',
+                        start: '{{ e.first_aired|date:"Y-m-d" }}'
+                    },
+                        {% endfor %}
+                    ]
+                });
+        });
+    </script>
 
 {% endblock %}
 
