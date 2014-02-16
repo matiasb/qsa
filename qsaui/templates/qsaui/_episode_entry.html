@@ -1,11 +1,13 @@
 {% load qsaui_tags %}
 
 <div class="media" id="{{ episode.number }}">
-    {% if episode.image %}
-        <div class="pull-left">
+    <div class="pull-left">
+        {% if episode.image %}
             <img src="{{ episode.image }}" width="200" />
-        </div>
-    {% endif %}
+        {% else %}
+            <img data-src="holder.js/200x120/text:Not available" />
+        {% endif %}
+    </div>
     <div class="media-body">
         <h4 class="media-heading">
             <a href="{% url 'series-detail' episode.series.tvdb_id %}">

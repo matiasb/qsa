@@ -7,11 +7,13 @@
 
 {% for series in watchlist %}
 <div class="media">
-    {% if series.poster %}
-        <a class="pull-left" href="{% url 'series-detail' series.tvdb_id %}">
+    <a class="pull-left" href="{% url 'series-detail' series.tvdb_id %}">
+        {% if series.poster %}
             <img src="{{ series.poster }}" width="120" />
-        </a>
-    {% endif %}
+        {% else %}
+            <img data-src="holder.js/120x170/text:Not available" />
+        {% endif %}
+    </a>
     <div class="media-body">
         <h4 class="media-heading">{{ series.name }}</h4>
         <p>
