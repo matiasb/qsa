@@ -15,5 +15,5 @@ python-openid==2.2.5
 requests==2.2.1
 requests-oauthlib==0.4.0
 static==1.0.2
--e git+https://github.com/matiasb/tvdbpy.git@f3472567183b8f9b97aecc11da20e679e03cbcb8#egg=tvdbpy-master
+-e git+https://github.com/matiasb/tvdbpy.git@720323ec4fc206e24f7c91667724c23ac45593a7#egg=tvdbpy-master
 wsgiref==0.1.2

@@ -62,7 +62,13 @@
     </div>
 
     <div class="col-md-2 text-center">
-        <p><img class="center-block media-object" src="{{ series.poster }}" width="120" /></p>
+        <p>
+            {% if series.poster %}
+                <img class="center-block media-object" src="{{ series.poster }}" width="120" />
+            {% else %}
+                <img data-src="holder.js/120x170/text:Not available" />
+            {% endif %}
+        </p>
     </div>
     {% if on_watchlist %}
     <p class="text-center"><span class="label label-info">Already tracking this series</span></p>
