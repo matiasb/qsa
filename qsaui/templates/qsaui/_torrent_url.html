@@ -1,3 +1,3 @@
-           {% if episode.torrent_url %} |
-           <a href="{{ episode.torrent_url }}">Search torrent</a>
-           {% endif %}
+{% if episode.already_aired %} |
+    {% for k, v in episode.torrent_urls %}<a href="{{ v }}">{{ k }}</a> {% endfor %}
+{% endif %}
