@@ -11,6 +11,12 @@ from django.db import models
 import tvdbpy
 
 
+GOOGLE = 'google.com'
+KICKASS = 'kickass.so'
+ISOHUNT = 'isohunt.to'
+PIRATE_BAY = 'thepiratebay.se'
+
+
 class BaseTvDBItem(models.Model):
 
     name = models.TextField()
@@ -162,9 +168,37 @@ class Episode(BaseTvDBItem):
         return self.first_aired < datetime.utcnow().date()
 
     @property
-    def torrent_url(self):
+    def isohunt_torrent_url(self):
+        params = {
+            'ihq': unicode(self),
+            'Torrent_sort': 'seeders.desc',
+        }
+        return 'http://isohunt.to/torrents/?' + urllib.urlencode(params)
+
+    @property
+    def kickass_torrent_url(self):
+        search_term = urllib.quote(unicode(self))
+        url = 'https://kickass.so/usearch/%s/?field=seeders&sorder=desc'
+        return url % search_term
+
+    @property
+    def piratebay_torrent_url(self):
         search_term = urllib.quote(unicode(self))
         return 'http://thepiratebay.se/search/%s/0/7/0' % search_term
+
+    @property
+    def search_torrent_url(self):
+        search_term = urllib.quote('%s torrent' % unicode(self))
+        return 'https://www.google.com/search?q=' + search_term
+
+    @property
+    def torrent_urls(self):
+        return [
+            (ISOHUNT, self.isohunt_torrent_url),
+            (KICKASS, self.kickass_torrent_url),
+            (PIRATE_BAY, self.piratebay_torrent_url),
+            (GOOGLE, self.search_torrent_url),
+        ]
 
     @property
     def short_name(self):
