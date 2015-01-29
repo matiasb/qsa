@@ -124,7 +124,8 @@ class Series(BaseTvDBItem):
         for season, episodes in tvdb_item.seasons.iteritems():
             for i, e in episodes.iteritems():
                 episode, _ = Episode.objects.get_or_create(
-                    series=self, season=season, number=i, tvdb_id=e.id)
+                    series=self, season=season, number=i)
+                episode.tvdb_id = e.id
                 episode.update_from_tvdb(tvdb_item=e)
 
 
