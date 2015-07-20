@@ -1,9 +1,14 @@
-import cStringIO
+from __future__ import unicode_literals
+
 import os
 import pep8
 import sys
 
 from collections import defaultdict
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 from django.conf import settings
 from django.test import TestCase
@@ -18,7 +23,7 @@ PACKAGES = [qsa, qsaui]
 
 class Pep8ConformanceTestCase(TestCase):
 
-    exclude = ['migrations']
+    exclude = ['south_migrations', 'migrations']
 
     def setUp(self):
         super(Pep8ConformanceTestCase, self).setUp()
@@ -51,7 +56,7 @@ class PyflakesAnalysisTestCase(TestCase):
 
     def test_pyflakes_analysis(self):
         old_stdout = sys.stdout
-        sys.stdout = cStringIO.StringIO()
+        sys.stdout = StringIO()
         try:
             for package in PACKAGES:
                 self._run_pyflakes_analysis(package)

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django import template
 
 register = template.Library()
@@ -12,6 +14,6 @@ def rating_as_stars(item, max_rating=10):
     assert 0 <= rating and rating <= max_rating
 
     stars = [True if i <= round(rating) else False
-             for i in xrange(1, max_rating + 1)]
+             for i in range(1, max_rating + 1)]
 
     return dict(stars=stars, rating=rating, rating_count=item.rating_count)

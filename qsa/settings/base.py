@@ -14,9 +14,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'qsa.db',
-        # The following settings are not used with sqlite3:
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'qsa',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -148,17 +147,16 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'south',
     'qsaui',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     # ... include the providers you want to enable:
-    ###'allauth.socialaccount.providers.facebook',
-    ###'allauth.socialaccount.providers.github',
-    ###'allauth.socialaccount.providers.google',
-    ###'allauth.socialaccount.providers.linkedin',
-    ###'allauth.socialaccount.providers.openid',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.github',
+    # 'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.linkedin',
+    # 'allauth.socialaccount.providers.openid',
     'allauth.socialaccount.providers.twitter',
 )
 

@@ -1,4 +1,9 @@
-from StringIO import StringIO
+from __future__ import unicode_literals
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -37,7 +42,8 @@ def home(request):
 @login_required
 def watchlist(request):
     context = dict(
-        watchlist=request.user.watcher.series.all().order_by('name'),
+        watchlist=request.user.watcher.series.all().order_by(
+            'completed', 'name'),
     )
     return TemplateResponse(request, 'qsaui/watchlist.html', context)
 
