@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
-import urllib
+try:
+    from urllib.parse import urlencode, quote
+except ImportError:
+    from urllib import urlencode, quote
 
 from datetime import datetime, timedelta
 
@@ -83,7 +86,7 @@ class Series(BaseTvDBItem):
     class Meta:
         verbose_name_plural = 'series'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def seasons(self, with_specials=False):
@@ -148,7 +151,7 @@ class Episode(BaseTvDBItem):
     class Meta:
         unique_together = ('series', 'season', 'number')
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s %s' % (self.series.name, self.short_name)
 
     def update_from_tvdb(self, tvdb_item, extended=False):
@@ -171,25 +174,25 @@ class Episode(BaseTvDBItem):
     @property
     def isohunt_torrent_url(self):
         params = {
-            'ihq': unicode(self),
+            'ihq': str(self),
             'Torrent_sort': 'seeders.desc',
         }
-        return 'http://isohunt.to/torrents/?' + urllib.urlencode(params)
+        return 'http://isohunt.to/torrents/?' + urlencode(params)
 
     @property
     def kickass_torrent_url(self):
-        search_term = urllib.quote(unicode(self))
+        search_term = quote(str(self))
         url = 'https://kickass.so/usearch/%s/?field=seeders&sorder=desc'
         return url % search_term
 
     @property
     def piratebay_torrent_url(self):
-        search_term = urllib.quote(unicode(self))
+        search_term = quote(str(self))
         return 'http://thepiratebay.se/search/%s/0/7/0' % search_term
 
     @property
     def search_torrent_url(self):
-        search_term = urllib.quote('%s torrent' % unicode(self))
+        search_term = quote('%s torrent' % str(self))
         return 'https://www.google.com/search?q=' + search_term
 
     @property

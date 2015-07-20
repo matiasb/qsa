@@ -5,7 +5,11 @@
 
 {% block inner-content %}
 
-{% for series in watchlist %}
+{% regroup watchlist by completed as data %}
+
+{% for item in data %}
+<h3>{% if item.grouper %}Finished{% else %}On going{% endif %}</h3>
+{% for series in item.list %}
 <div class="media">
     <a class="pull-left" href="{% url 'series-detail' series.tvdb_id %}">
         {% if series.poster %}
@@ -18,7 +22,6 @@
         <h4 class="media-heading">{{ series.name }}</h4>
         <p>
             <small>{{ series.first_aired.year }} | {{ series.network|default:"-" }} |
-                {{ series.completed|yesno:"Finished,On going, Unknown" }} |
                 <a href="{% url 'series-detail' series.tvdb_id %}">Details</a></small>
                 <br/>
                 {% include 'qsaui/_imdb_url.html' with item=series %}
@@ -49,6 +52,7 @@
         </form>
     </div>
 </div>
+{% endfor %}
 {% empty %}
 <p>You have not yet chosen any series to track!</p>
 {% endfor %}
