@@ -2,3 +2,4 @@ qsa.db
 *.pyc
 staticfiles
 qsa/settings/local.py
+env/
