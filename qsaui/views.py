@@ -79,7 +79,7 @@ def update_catalogue(request):
             if updated:
                 msg = 'Successfully updated %s (checked %s).' % (
                     ' and '.join(
-                        '%s %s' % (len(v), k) for k, v in updated.iteritems()),
+                        '%s %s' % (len(v), k) for k, v in updated.items()),
                     period)
                 messages.success(request, msg)
 

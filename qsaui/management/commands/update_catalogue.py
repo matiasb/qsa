@@ -28,13 +28,13 @@ class Command(BaseCommand):
 
         if unknown:
             stats = ' and '.join(
-                '%s %s' % (v, k) for (k, v) in unknown.iteritems())
+                '%s %s' % (v, k) for (k, v) in unknown.items())
             self.stderr.write(
                 'There were %s that do not exist locally.' % stats)
 
         if updated:
             msg = 'Successfully updated %s' % ' and '.join(
-                '%s %s' % (len(v), k) for k, v in updated.iteritems())
+                '%s %s' % (len(v), k) for k, v in updated.items())
         else:
             msg = 'Nothing to update.'
         self.stdout.write(msg)
