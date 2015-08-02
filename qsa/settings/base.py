@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-# Make this unique, and don't share it with anybody.
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'n7809-o3v=2aw5tjmych#en1_o+swa7pei9^kclh2jq8tlr52h'
 
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
@@ -32,13 +33,6 @@ DATABASES = {
     }
 }
 
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
-)
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,16 +42,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'qsaui',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # ... include the providers you want to enable:
-    # 'allauth.socialaccount.providers.facebook',
-    # 'allauth.socialaccount.providers.github',
-    # 'allauth.socialaccount.providers.google',
-    # 'allauth.socialaccount.providers.linkedin',
-    # 'allauth.socialaccount.providers.openid',
     'allauth.socialaccount.providers.twitter',
 )
 
@@ -72,14 +61,13 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'qsa.urls'
 
-# Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'qsa.wsgi.application'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Buenos_Aires'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
 USE_I18N = True
 
@@ -89,6 +77,24 @@ USE_TZ = False
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'qsa', 'static')
 STATIC_URL = '/static/'
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+)
 
 SITE_ID = 1
 
