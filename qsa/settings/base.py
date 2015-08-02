@@ -102,6 +102,8 @@ SITE_ID = 1
 import dj_database_url
 DATABASES['default'] = dj_database_url.config()
 
+TVDBPY_API_KEY = os.getenv('TVDBPY_API_KEY')
+
 LOGIN_REDIRECT_URL = '/'
 PYFLAKES_IGNORE_FILE = os.path.join(
     BASE_DIR, 'qsaui', 'tests', 'pyflakes-ignore.txt')
