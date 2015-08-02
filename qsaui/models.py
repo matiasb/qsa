@@ -130,8 +130,8 @@ class Series(BaseTvDBItem):
             self._fetch_episodes(tvdb_item)
 
     def _fetch_episodes(self, tvdb_item):
-        for season, episodes in tvdb_item.seasons.iteritems():
-            for i, e in episodes.iteritems():
+        for season, episodes in tvdb_item.seasons.items():
+            for i, e in episodes.items():
                 episode, _ = Episode.objects.get_or_create(
                     series=self, season=season, number=i)
                 episode.tvdb_id = e.id

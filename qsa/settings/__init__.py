@@ -1,6 +1,6 @@
-from .base import *
+from .base import *  # noqa
 
 try:
-    from .local import *
+    from .local import *  # noqa
 except ImportError:
     pass
