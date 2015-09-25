@@ -3,9 +3,9 @@ from __future__ import print_function, unicode_literals
 import sys
 from collections import defaultdict
 
+import tvdbpy
 from django.conf import settings
 
-import tvdbpy
 from qsaui.models import Series, Episode
 
 
