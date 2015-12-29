@@ -59,11 +59,12 @@ class CatalogueUpdater(object):
 
         return updated, unknown
 
-    def _update_item(self, update, item, created=False):
+    def _update_item(self, update, item, tvdb_item=None, created=False):
         assert item is not None
         if item.last_updated is None or item.last_updated < update.timestamp:
             # item needs update
-            tvdb_item = update.get_updated_item()
+            if tvdb_item is None:
+                tvdb_item = update.get_updated_item()
             item.update_from_tvdb(tvdb_item=tvdb_item, extended=False)
 
             update_time = update.timestamp.isoformat()
@@ -87,8 +88,9 @@ class CatalogueUpdater(object):
         except Series.DoesNotExist:
             return
 
+        tvdb_item = update.get_updated_item()
         episode, created = Episode.objects.get_or_create(
-            series=series, tvdb_id=update.id,
-            defaults=dict(season=0, number=0))
-
-        return self._update_item(update, episode, created)
+            series=series, season=tvdb_item.season, number=tvdb_item.number)
+        episode.tvdb_id = update.id
+        episode.save()
+        return self._update_item(update, episode, tvdb_item, created)
