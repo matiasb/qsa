@@ -61,13 +61,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, verbose_name='ID', auto_created=True, serialize=False)),
                 ('series', models.ManyToManyField(to='qsaui.Series')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='episode',
             name='series',
-            field=models.ForeignKey(to='qsaui.Series'),
+            field=models.ForeignKey(to='qsaui.Series', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='episode',
