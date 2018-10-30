@@ -140,7 +140,7 @@ class Series(BaseTvDBItem):
 
 class Episode(BaseTvDBItem):
 
-    series = models.ForeignKey(Series)
+    series = models.ForeignKey(Series, on_delete=models.CASCADE)
     season = models.PositiveIntegerField()
     number = models.PositiveIntegerField()
     image = models.URLField()
@@ -210,7 +210,8 @@ class Episode(BaseTvDBItem):
 
 
 class Watcher(models.Model):
-    user = models.OneToOneField(User)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     series = models.ManyToManyField(Series)
 
     def episodes_from_yesterday(self):

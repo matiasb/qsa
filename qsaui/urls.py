@@ -1,15 +1,14 @@
-from __future__ import unicode_literals
+from django.urls import path
 
-from django.conf.urls import patterns, url
+import qsaui.views
 
 
-urlpatterns = patterns(
-    'qsaui.views',
-    url(r'^$', 'home', name='home'),
-    url(r'^watchlist/$', 'watchlist', name='your-watchlist'),
-    url(r'^search/$', 'search', name='search'),
-    url(r'^update/$', 'update_catalogue', name='update-catalogue'),
-    url(r'^(?P<tvdb_id>\d+)/$', 'series_detail', name='series-detail'),
-    url(r'^(?P<tvdb_id>\d+)/(?P<season>\d+)/$', 'series_episodes',
-        name='series-episodes'),
-)
+urlpatterns = [
+    path('', qsaui.views.home, name='home'),
+    path('watchlist/', qsaui.views.watchlist, name='your-watchlist'),
+    path('search/', qsaui.views.search, name='search'),
+    path('update/', qsaui.views.update_catalogue, name='update-catalogue'),
+    path('<int:tvdb_id>/', qsaui.views.series_detail, name='series-detail'),
+    path('<int:tvdb_id>/<int:season>/', qsaui.views.series_episodes,
+         name='series-episodes'),
+]

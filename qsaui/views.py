@@ -8,11 +8,11 @@ except ImportError:
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import linebreaksbr
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.views.decorators.http import (
     require_GET,
     require_http_methods,
