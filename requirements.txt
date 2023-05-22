@@ -11,7 +11,7 @@ pyflakes==2.1.1
 pystache==0.5.4
 python3-openid==3.1.0
 pytz==2019.3
-requests==2.22.0
+requests==2.31.0
 requests-oauthlib==1.2.0
 static3==0.7.0
 -e git+https://github.com/matiasb/tvdbpy.git#egg=tvdbpy-master
